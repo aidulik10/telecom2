@@ -4,7 +4,6 @@ import { Phone, Globe, Smartphone, Tv } from 'lucide-react';
 export default function Home({ setCurrentPage }) {
   return (
     <div className="space-y-12 pb-12">
-      {/* Большой Баннер (Hero) */}
       <section className="bg-[#EBE7E0] py-16 px-4">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div className="space-y-6 text-center md:text-left">
@@ -20,7 +19,6 @@ export default function Home({ setCurrentPage }) {
         </div>
       </section>
 
-      {/* Сетка Категорий (Два главных блока, как на скриншоте) */}
       <section className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div onClick={() => setCurrentPage('mobile')} className="bg-[#004B6E] text-white p-8 rounded-2xl shadow-md min-h-[240px] flex flex-col justify-between cursor-pointer group">
           <h2 className="text-3xl font-bold uppercase tracking-wide">Բջջային կապ</h2>
@@ -38,7 +36,6 @@ export default function Home({ setCurrentPage }) {
         </div>
       </section>
 
-      {/* Дополнительные экспресс-ссылки */}
       <section className="max-w-7xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div onClick={() => setCurrentPage('devices')} className="bg-white p-6 rounded-xl shadow-sm border text-center cursor-pointer hover:shadow-md transition">
           <Smartphone className="mx-auto text-[#004B6E] mb-2" />
