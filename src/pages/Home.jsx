@@ -10,15 +10,15 @@ export default function Home({ setCurrentPage }) {
       subtitle: "Տունը այնտեղ է, որտեղ միասին ենք",
       buttonText: "Ավելին",
       page: "mobile",
-      bgGradient: "from-[#004B6E] to-[#FF4B4B]"
+      image: "https://www.telecomarmenia.am/images/sliders_block_slides/1/17758194399312.png"
     },
     {
       id: 2,
       title: "Արագ 5G Ինտերնետ",
-      subtitle: "Վայելիր ամենաարագ ինտերնետը ամբողջ Հայաստանում",
+      subtitle: "լիցքավորիր առցանց",
       buttonText: "Ծածկույթի քարտ",
       page: "news",
-      bgGradient: "from-[#FF4B4B] to-[#085a82]"
+      image: "https://www.telecomarmenia.am/images/advanced_slider/2/17714010168919.jpeg"
     },
     {
       id: 3,
@@ -39,10 +39,10 @@ export default function Home({ setCurrentPage }) {
     {
       id: 5,
       title: "Ռոումինգ առանց սահմանների",
-      subtitle: "Մնա կապի մեջ արտասահմանում մատչելի փաթեթներով",
+      subtitle: "ռոումինգ, որ գալիս է քեզ հետ",
       buttonText: "Իմանալ ավելին",
       page: "mobile",
-      bgGradient: "from-[#F59E0B] to-[#FF4B4B]"
+      image: "https://www.telecomarmenia.am/images/advanced_slider/2/17835178577289.png"
     },
     {
       id: 6,
@@ -101,7 +101,7 @@ export default function Home({ setCurrentPage }) {
   return (
     <div className="space-y-12 pb-12">
       
-      {/* Промо-баннер с высоким профилем и слайдером на 10 карточек */}
+      {/* Промо-баннер с слайдером */}
       <section className="bg-[#EBE7E0] py-20 px-4 relative group">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[360px]">
           
@@ -121,8 +121,17 @@ export default function Home({ setCurrentPage }) {
             </button>
           </div>
 
-          {/* Градиентная карточка баннера */}
-          <div className={`w-full h-72 md:h-96 bg-gradient-to-tr ${activeSlide.bgGradient} rounded-2xl opacity-90 shadow-xl transition-all duration-500`}>
+          {/* Изображение или Градиентная карточка баннера */}
+          <div className="w-full h-72 md:h-96 rounded-2xl shadow-xl transition-all duration-500 overflow-hidden flex items-center justify-center">
+            {activeSlide.image ? (
+              <img 
+                src={activeSlide.image} 
+                alt={activeSlide.title} 
+                className="w-full h-full object-cover rounded-2xl"
+              />
+            ) : (
+              <div className={`w-full h-full bg-gradient-to-tr ${activeSlide.bgGradient} opacity-90 rounded-2xl`} />
+            )}
           </div>
         </div>
 
@@ -142,7 +151,7 @@ export default function Home({ setCurrentPage }) {
           <ChevronRight size={28} />
         </button>
 
-        {/* Точки-индикаторы для всех 10 слайдов */}
+        {/* Точки-индикаторы */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
           {slides.map((_, idx) => (
             <button
@@ -178,7 +187,7 @@ export default function Home({ setCurrentPage }) {
           </div>
         </div>
 
-        {/* НИЖНИЙ РЯД: 1-я длинная (62.5%), 2-я короткая (37.5%) */}
+        {/* НИЖНИЙ РЯД */}
         <div className="grid grid-cols-1 md:grid-cols-[5fr_3fr] gap-6">
           <div onClick={() => setCurrentPage('fixed')} className="bg-[#085a82] text-white p-8 rounded-2xl shadow-md min-h-[240px] flex flex-col justify-between cursor-pointer group">
             <h2 className="text-3xl font-bold uppercase tracking-wide">Հեռուստատեսություն և Ինտերնետ</h2>
