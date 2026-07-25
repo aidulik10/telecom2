@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Phone, Globe, Smartphone, Tv, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Home({ setCurrentPage }) {
@@ -88,6 +88,15 @@ export default function Home({ setCurrentPage }) {
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Автоматическая смена слайда каждые 5 секунд
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [slides.length, currentSlide]);
+
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
@@ -101,13 +110,13 @@ export default function Home({ setCurrentPage }) {
   return (
     <div className="space-y-12 pb-12">
       
-      {/* Промо-баннер с слайдером */}
-      <section className="bg-[#EBE7E0] py-20 px-4 relative group">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[360px]">
+      {/* Промо-баннер с полноразмерной картинкой и автопереключением */}
+      <section className="bg-[#EBE7E0] relative group overflow-hidden">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center min-h-[420px]">
           
           {/* Текст слайдера */}
-          <div className="space-y-6 text-center md:text-left transition-all duration-500">
-            <h1 className="text-4xl md:text-6xl font-black text-[#004B6E] leading-tight">
+          <div className="space-y-6 text-center md:text-left p-8 md:p-12 lg:p-16 z-10">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#004B6E] leading-tight">
               {activeSlide.title}
             </h1>
             <p className="text-lg text-gray-700">
@@ -121,16 +130,16 @@ export default function Home({ setCurrentPage }) {
             </button>
           </div>
 
-          {/* Изображение или Градиентная карточка баннера */}
-          <div className="w-full h-72 md:h-96 rounded-2xl shadow-xl transition-all duration-500 overflow-hidden flex items-center justify-center">
+          {/* Картинка / Градиент во всю правую сторону */}
+          <div className="w-full h-full min-h-[300px] md:min-h-[420px] relative">
             {activeSlide.image ? (
               <img 
                 src={activeSlide.image} 
                 alt={activeSlide.title} 
-                className="w-full h-full object-cover rounded-2xl"
+                className="w-full h-full object-cover object-center absolute inset-0 transition-all duration-700"
               />
             ) : (
-              <div className={`w-full h-full bg-gradient-to-tr ${activeSlide.bgGradient} opacity-90 rounded-2xl`} />
+              <div className={`w-full h-full bg-gradient-to-tr ${activeSlide.bgGradient} opacity-90 absolute inset-0 transition-all duration-700`} />
             )}
           </div>
         </div>
@@ -138,7 +147,7 @@ export default function Home({ setCurrentPage }) {
         {/* Левая стрелка */}
         <button 
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#004B6E] p-3 rounded-full shadow-md transition transform hover:scale-110 z-10"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#004B6E] p-3 rounded-full shadow-md transition transform hover:scale-110 z-20"
         >
           <ChevronLeft size={28} />
         </button>
@@ -146,13 +155,13 @@ export default function Home({ setCurrentPage }) {
         {/* Правая стрелка */}
         <button 
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#004B6E] p-3 rounded-full shadow-md transition transform hover:scale-110 z-10"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#004B6E] p-3 rounded-full shadow-md transition transform hover:scale-110 z-20"
         >
           <ChevronRight size={28} />
         </button>
 
         {/* Точки-индикаторы */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
           {slides.map((_, idx) => (
             <button
               key={idx}
