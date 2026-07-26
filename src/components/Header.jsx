@@ -13,85 +13,98 @@ export default function Header({ setCurrentPage }) {
     { name: 'Աջակցություն', id: 'support' },
   ];
 
-  // Полное белое меню со всеми пунктами для всех 7 разделов
+  // Пункты меню с их подпунктами и связанными страницами
   const whiteNavMenu = [
     {
       id: 'tariffs',
       name: 'Սակագներ',
+      page: 'mobile', // Основная страница для самого разделов
       items: [
-        'Բջջային կապ',
-        'Ինտերնետ և TV ԿՈՍՄՈ',
-        'Ինտերնետ և TV ԿՈՄԲՈ',
-        'Ֆիքսված հեռախոսակապ',
+        { name: 'Բջջային կապ', page: 'mobile' },
+        { name: 'Ինտերնետ և TV ԿՈՍՄՈ', page: 'fixed' },
+        { name: 'Ինտերնետ և TV ԿՈՄԲՈ', page: 'fixed' },
+        { name: 'Ֆիքսված հեռախոսակապ', page: 'fixed' },
       ],
     },
     {
       id: 'internet',
       name: 'Ինտերնետ',
+      page: 'fixed',
       items: [
-        'Սմարտֆոնի համար',
-        'Տան համար - ԿՈՍՄՈ',
-        'Տան համար - ԿՈՄԲՈ',
-        'Համակարգչի/պլանշետի համար',
-        'Team 5G',
+        { name: 'Սմարտֆոնի համար', page: 'mobile' },
+        { name: 'Տան համար - ԿՈՍՄՈ', page: 'fixed' },
+        { name: 'Տան համար - ԿՈՄԲՈ', page: 'fixed' },
+        { name: 'Համակարգչի/պլանշետի համար', page: 'fixed' },
+        { name: 'Team 5G', page: 'news' },
       ],
     },
     { 
       id: 'services', 
       name: 'Ծառայություններ', 
+      page: 'services',
       items: [
-        'Team TV',
-        'Վճարում և համալրում',
-        'Զվարճանք',
-        'Զանգեր և անվտանգություն',
-        'Ֆիքսված հեռախոսակապ',
+        { name: 'Team TV', page: 'fixed' },
+        { name: 'Վճարում և համալրում', page: 'profile' },
+        { name: 'Զվարճանք', page: 'services' },
+        { name: 'Զանգեր և անվտանգություն', page: 'services' },
+        { name: 'Ֆիքսված հեռախոսակապ', page: 'fixed' },
       ] 
     },
     { 
       id: 'roaming', 
       name: 'Ռոումինգ', 
+      page: 'mobile',
       items: [
-        'Ռոումինգ',
-        'Միջազգային կապ',
-        'Օգտակար տեղեկատվություն',
-        'Ծառայություններ',
+        { name: 'Ռոումինգ', page: 'mobile' },
+        { name: 'Միջազգային կապ', page: 'mobile' },
+        { name: 'Օգտակար տեղեկատվություն', page: 'support' },
+        { name: 'Ծառայություններ', page: 'services' },
       ] 
     },
     { 
       id: 'shop', 
       name: 'Առցանց խանութ', 
+      page: 'devices',
       items: [
-        'E-shop',
-        'Առցանց ապառիկ',
-        'Բաժանորդագրություն',
+        { name: 'E-shop', page: 'devices' },
+        { name: 'Առցանց ապառիկ', page: 'devices' },
+        { name: 'Բաժանորդագրություն', page: 'devices' },
       ] 
     },
     { 
       id: 'offers', 
       name: 'Առաջարկներ', 
+      page: 'news',
       items: [
-        'Շեյքի՛ր և Շահի՛ր',
-        'Team Բոնուս',
-        'Ակցիաներ',
-        'MobiBattle',
-        'GeForce Games',
-        'Koreez',
+        { name: 'Շեյքի՛ր և Շահի՛ր', page: 'news' },
+        { name: 'Team Բոնուս', page: 'news' },
+        { name: 'Ակցիաներ', page: 'news' },
+        { name: 'MobiBattle', page: 'news' },
+        { name: 'GeForce Games', page: 'news' },
+        { name: 'Koreez', page: 'news' },
       ] 
     },
     { 
       id: 'help', 
       name: 'Օգնություն', 
+      page: 'support',
       items: [
-        'Հաճախ տրվող հարցեր',
-        'Սարքերի կարգավորումներ',
-        'Բաժանորդային սպասարկում',
-        'USSD հրահանգներ և օգտակար համարներ',
+        { name: 'Հաճախ տրվող հարցեր', page: 'support' },
+        { name: 'Սարքերի կարգավորումներ', page: 'support' },
+        { name: 'Բաժանորդային սպասարկում', page: 'support' },
+        { name: 'USSD հրահանգներ և օգտակար համարներ', page: 'support' },
       ] 
     },
   ];
 
-  // Состояние для активного элемента при наведении
   const [hoveredTab, setHoveredTab] = useState(null);
+
+  const handleNavigation = (pageId) => {
+    if (pageId) {
+      setCurrentPage(pageId);
+      setHoveredTab(null); // Закрываем выпадающее меню при переходе
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 shadow-md">
@@ -99,7 +112,7 @@ export default function Header({ setCurrentPage }) {
       <div className="bg-[#004B6E] text-white px-4 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           
-          <div onClick={() => setCurrentPage('home')} className="flex items-center space-x-2 cursor-pointer">
+          <div onClick={() => handleNavigation('home')} className="flex items-center space-x-2 cursor-pointer">
             <span className="text-2xl font-black tracking-wider text-[#FF4B4B]">team</span>
             <span className="text-xs uppercase font-light border-l border-white/30 pl-2 hidden sm:inline">Telecom</span>
           </div>
@@ -108,7 +121,7 @@ export default function Header({ setCurrentPage }) {
             {topNavItems.map((item) => (
               <button 
                 key={item.id} 
-                onClick={() => setCurrentPage(item.id)}
+                onClick={() => handleNavigation(item.id)}
                 className="hover:text-[#FF4B4B] transition-colors"
               >
                 {item.name}
@@ -117,7 +130,7 @@ export default function Header({ setCurrentPage }) {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <button onClick={() => setCurrentPage('profile')} className="hover:text-gray-300 transition"><User size={20} /></button>
+            <button onClick={() => handleNavigation('profile')} className="hover:text-gray-300 transition"><User size={20} /></button>
             <button className="hover:text-gray-300 transition relative">
               <ShoppingCart size={20} />
               <span className="absolute -top-2 -right-2 bg-[#FF4B4B] text-xs w-4 h-4 rounded-full flex items-center justify-center">0</span>
@@ -134,7 +147,7 @@ export default function Header({ setCurrentPage }) {
           
           {/* TEAM с подписью Telecom Armenia */}
           <div 
-            onClick={() => setCurrentPage('home')} 
+            onClick={() => handleNavigation('home')} 
             className="flex flex-col cursor-pointer select-none group shrink-0"
           >
             <span className="text-2xl font-black uppercase tracking-wider text-[#004B6E] leading-none group-hover:opacity-80 transition-opacity">
@@ -156,6 +169,7 @@ export default function Header({ setCurrentPage }) {
               >
                 <button
                   type="button"
+                  onClick={() => handleNavigation(menuItem.page)}
                   className={`px-3 py-1.5 text-xs md:text-sm font-bold rounded-md transition-all relative ${
                     hoveredTab === menuItem.id
                       ? 'text-[#004B6E] bg-gray-100/80'
@@ -170,7 +184,7 @@ export default function Header({ setCurrentPage }) {
                   )}
                 </button>
 
-                {/* ВЫПАДАЮЩИЙ ОСТРОВОК ДЛЯ КАЖДОГО СЛОВА ОТДЕЛЬНО */}
+                {/* ВЫПАДАЮЩИЙ ОСТРОВОК С РАБОЧИМИ ССЫЛКАМИ */}
                 {hoveredTab === menuItem.id && (
                   <div className="absolute top-full left-0 pt-2 z-50 w-max">
                     <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3">
@@ -180,9 +194,10 @@ export default function Header({ setCurrentPage }) {
                             <li key={subIdx}>
                               <button
                                 type="button"
-                                className="w-full text-left px-2.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-[#004B6E] hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap"
+                                onClick={() => handleNavigation(subItem.page)}
+                                className="w-full text-left px-2.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-[#004B6E] hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap cursor-pointer"
                               >
-                                {subItem}
+                                {subItem.name}
                               </button>
                             </li>
                           ))}
@@ -201,8 +216,8 @@ export default function Header({ setCurrentPage }) {
 
           {/* Кнопка «Վճարել» */}
           <div 
-            onClick={(e) => e.preventDefault()} 
-            className="bg-[#004B6E] text-white h-10 w-10 hover:w-32 rounded-xl shadow-sm flex items-center justify-start px-2.5 cursor-not-allowed select-none transition-all duration-300 ease-in-out group overflow-hidden shrink-0"
+            onClick={() => handleNavigation('profile')} 
+            className="bg-[#004B6E] text-white h-10 w-10 hover:w-32 rounded-xl shadow-sm flex items-center justify-start px-2.5 cursor-pointer select-none transition-all duration-300 ease-in-out group overflow-hidden shrink-0"
           >
             <CreditCard size={20} className="shrink-0 text-white group-hover:text-emerald-400 transition-colors" />
             <span className="font-bold text-sm ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
