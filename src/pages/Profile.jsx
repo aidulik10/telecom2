@@ -221,7 +221,7 @@ export default function Profile() {
                 }}
                 className={`flex-1 text-center font-bold pb-2 transition-colors ${
                   !isRegisterMode
-                    ? 'text-[#004B6E] border-b-2 border-[#004B6E]'
+                    ? 'text-[#FF4B4B] border-b-2 border-[#FF4B4B]'
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
@@ -235,7 +235,7 @@ export default function Profile() {
                 }}
                 className={`flex-1 text-center font-bold pb-2 transition-colors ${
                   isRegisterMode
-                    ? 'text-[#004B6E] border-b-2 border-[#004B6E]'
+                    ? 'text-[#FF4B4B] border-b-2 border-[#FF4B4B]'
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
@@ -264,7 +264,7 @@ export default function Profile() {
                     placeholder={t.fullNamePlaceholder}
                     value={formData.fullName}
                     onChange={handleChange}
-                    className="w-full border-gray-300 border rounded-md px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#004B6E] transition"
+                    className="w-full border-gray-300 border rounded-md px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF4B4B] transition"
                   />
                 </div>
               )}
@@ -281,7 +281,7 @@ export default function Profile() {
                     placeholder={t.emailPlaceholder}
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full border-gray-300 border rounded-md px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#004B6E] transition"
+                    className="w-full border-gray-300 border rounded-md px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF4B4B] transition"
                   />
                 </div>
               )}
@@ -297,7 +297,7 @@ export default function Profile() {
                   placeholder={t.phonePlaceholder}
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full border-gray-300 border rounded-md px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#004B6E] transition"
+                  className="w-full border-gray-300 border rounded-md px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF4B4B] transition"
                 />
               </div>
 
@@ -314,7 +314,7 @@ export default function Profile() {
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full border-gray-300 border rounded-md pl-3.5 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#004B6E] transition"
+                    className="w-full border-gray-300 border rounded-md pl-3.5 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF4B4B] transition"
                   />
                   <button
                     type="button"
@@ -340,7 +340,7 @@ export default function Profile() {
                       placeholder="••••••••"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="w-full border-gray-300 border rounded-md pl-3.5 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#004B6E] transition"
+                      className="w-full border-gray-300 border rounded-md pl-3.5 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF4B4B] transition"
                     />
                     <button
                       type="button"
@@ -353,9 +353,10 @@ export default function Profile() {
                 </div>
               )}
 
+              {/* КРАСНАЯ КНОПКА ОТПРАВКИ */}
               <button
                 type="submit"
-                className="w-full bg-[#004B6E] hover:bg-[#085a82] text-white font-bold py-2.5 rounded-md shadow transition duration-200 text-sm mt-2"
+                className="w-full bg-[#FF4B4B] hover:bg-[#e03f3f] text-white font-bold py-2.5 rounded-md shadow transition duration-200 text-sm mt-2 active:scale-[0.98]"
               >
                 {isRegisterMode ? t.submitRegister : t.submitLogin}
               </button>
@@ -367,7 +368,7 @@ export default function Profile() {
                 type="button"
                 onClick={() => setCurrentLang('AM')}
                 className={`flex items-center space-x-1.5 p-1 rounded transition ${
-                  currentLang === 'AM' ? 'ring-2 ring-[#004B6E] bg-gray-50' : 'opacity-70 hover:opacity-100'
+                  currentLang === 'AM' ? 'ring-2 ring-[#FF4B4B] bg-gray-50' : 'opacity-70 hover:opacity-100'
                 }`}
                 title="Հայերեն"
               >
@@ -383,7 +384,7 @@ export default function Profile() {
                 type="button"
                 onClick={() => setCurrentLang('RU')}
                 className={`flex items-center space-x-1.5 p-1 rounded transition ${
-                  currentLang === 'RU' ? 'ring-2 ring-[#004B6E] bg-gray-50' : 'opacity-70 hover:opacity-100'
+                  currentLang === 'RU' ? 'ring-2 ring-[#FF4B4B] bg-gray-50' : 'opacity-70 hover:opacity-100'
                 }`}
                 title="Русский"
               >
@@ -399,7 +400,7 @@ export default function Profile() {
                 type="button"
                 onClick={() => setCurrentLang('US')}
                 className={`flex items-center space-x-1.5 p-1 rounded transition ${
-                  currentLang === 'US' ? 'ring-2 ring-[#004B6E] bg-gray-50' : 'opacity-70 hover:opacity-100'
+                  currentLang === 'US' ? 'ring-2 ring-[#FF4B4B] bg-gray-50' : 'opacity-70 hover:opacity-100'
                 }`}
                 title="English"
               >
