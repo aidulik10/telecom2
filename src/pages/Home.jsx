@@ -82,15 +82,14 @@ export default function Home({ setCurrentPage }) {
       image: "https://www.telecomarmenia.am/images/advanced_slider/2/17810972360462.png",
       textColor: "text-white"
     },
-    // ОБНОВЛЕННЫЙ 10-Й СЛАЙДС БЕЛЫМ ФОНОМ
     {
       id: 10,
       title: "Be free 3500",
       buttonText: "Ավելին",
       page: "mobile",
-      bgColor: "bg-white", // Белый фон
+      bgColor: "bg-white",
       image: "https://www.telecomarmenia.am/images/advanced_slider/2/17494512279093.jpeg",
-      textColor: "text-[#004B6E]" // Темно-синий текст
+      textColor: "text-[#004B6E]"
     }
   ];
 
@@ -266,6 +265,26 @@ export default function Home({ setCurrentPage }) {
               <span className="text-sm sm:text-base underline group-hover:text-gray-300">Ավելին →</span>
               <Smartphone size={32} className="sm:w-10 sm:h-10 opacity-40 group-hover:opacity-80 transition" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🟦 ШИРОКАЯ ПОЛОСА ВО ВСЮ ШИРИНУ ЭКРАНА */}
+      <section className="w-full bg-[#004B6E] text-white py-12 px-4 shadow-inner mt-8">
+        <div className="max-w-7xl mx-auto flex flex-col items-center justify-center text-center space-y-4">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-wider">
+            Դարձեք TEAM Բաժանորդ․
+          </h2>
+          <p className="text-xs sm:text-sm md:text-base text-gray-200 max-w-xl">
+            Միացե՛ք մեզ ձեր համարով և օգտվեք Team-ի բոլոր առավելություններից:
+          </p>
+          <div className="pt-2">
+            <button 
+              onClick={() => setCurrentPage('profile')}
+              className="bg-[#FF4B4B] hover:bg-[#e03f3f] active:scale-95 text-white font-bold text-sm sm:text-base py-3.5 px-10 rounded-full shadow-lg transition duration-200"
+            >
+              Միանալ
+            </button>
           </div>
         </div>
       </section>
