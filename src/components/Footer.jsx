@@ -37,7 +37,7 @@ export default function Footer({ setCurrentPage }) {
         </div>
       </div>
       <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-slate-800 text-center text-xs text-gray-500">
-        © {new Date().getFullYear()} Телеком Провайдер Шаблон. Все права защищены.
+         {new Date().getFullYear()} Телеком Провайдер Шаблон. Все права защищены.
       </div>
     </footer>
   );
