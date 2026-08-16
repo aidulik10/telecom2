@@ -1,5 +1,13 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Phone, Globe, Smartphone, Tv, ChevronLeft, ChevronRight, MessageCircle, X, Send, User, Circle, Search } from 'lucide-react';
+import {
+  subscribeToUsers,
+  subscribeToMessages,
+  sendMessageToFirestore,
+  getChatId,
+  registerUserInFirestore,
+  setUserOffline
+} from '../services/chatService';
 
 export default function Home({ setCurrentPage }) {
   // Массив баннеров
@@ -97,26 +105,62 @@ export default function Home({ setCurrentPage }) {
 
   // 💬 Состояния модуля чата
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(true); // Состояние авторизации
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Сюда будут подгружаться реальные пользователи из вашей базы данных / API
+
+  // Текущий авторизованный пользователь (после Google OAuth), берём из localStorage.
+  // Если у тебя объект пользователя хранится под другим ключом/структурой —
+  // поменяй здесь ключ 'currentUser' и поля id/name/email/picture.
+  const [currentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('currentUser');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+  const isRegistered = !!currentUser;
+
+  // Реальные зарегистрированные пользователи из Firestore (реалтайм)
   const [registeredUsers, setRegisteredUsers] = useState([]);
-  
+
   // Выбранный пользователь для диалога
   const [selectedUser, setSelectedUser] = useState(null);
-  
-  // История сообщений по ID диалога
-  const [chatMessages, setChatMessages] = useState({});
+
+  // Сообщения текущего открытого диалога (реалтайм из Firestore)
+  const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
-  // Загрузка пользователей при открытии (заглушка под API запрос)
+  // Регистрируем текущего пользователя в Firestore и подписываемся на список пользователей
   useEffect(() => {
-    if (isRegistered && isChatOpen) {
-      // Здесь должен быть реальный fetch/axios запрос к вашему бэкенду
-      // fetch('/api/users').then(res => res.json()).then(data => setRegisteredUsers(data));
+    if (!isRegistered) return;
+
+    registerUserInFirestore(currentUser);
+
+    const unsubscribeUsers = subscribeToUsers(currentUser.id, (users) => {
+      setRegisteredUsers(users);
+    });
+
+    const handleUnload = () => setUserOffline(currentUser.id);
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      unsubscribeUsers();
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, [isRegistered, currentUser]);
+
+  // Подписываемся на сообщения выбранного диалога
+  useEffect(() => {
+    if (!selectedUser || !currentUser) {
+      setChatMessages([]);
+      return;
     }
-  }, [isRegistered, isChatOpen]);
+    const chatId = getChatId(currentUser.id, selectedUser.id);
+    const unsubscribeMessages = subscribeToMessages(chatId, (messages) => {
+      setChatMessages(messages);
+    });
+    return () => unsubscribeMessages();
+  }, [selectedUser, currentUser]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -134,31 +178,24 @@ export default function Home({ setCurrentPage }) {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !selectedUser) return;
-    
-    const userId = selectedUser.id;
-    const userMessages = chatMessages[userId] || [];
+    if (!newMessage.trim() || !selectedUser || !currentUser) return;
 
-    setChatMessages({
-      ...chatMessages,
-      [userId]: [
-        ...userMessages,
-        {
-          id: Date.now(),
-          sender: 'me',
-          text: newMessage,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]
-    });
+    const chatId = getChatId(currentUser.id, selectedUser.id);
+    const textToSend = newMessage.trim();
     setNewMessage('');
+    await sendMessageToFirestore(chatId, currentUser.id, textToSend);
   };
 
-  const filteredUsers = registeredUsers.filter(u => 
+  const filteredUsers = registeredUsers.filter(u =>
     u.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const formatTime = (createdAt) => {
+    if (!createdAt?.toDate) return '';
+    return createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   const activeSlide = slides[currentSlide];
 
@@ -467,28 +504,31 @@ export default function Home({ setCurrentPage }) {
 
                       {/* Область сообщений */}
                       <div className="flex-1 p-3 overflow-y-auto space-y-2.5 bg-[#F8F6F0]/30">
-                        {(chatMessages[selectedUser.id] || []).length === 0 ? (
+                        {chatMessages.length === 0 ? (
                           <div className="text-center text-xs text-gray-400 my-auto pt-8">
                             Սկսեք զրույցը {selectedUser.name}-ի հետ
                           </div>
                         ) : (
-                          (chatMessages[selectedUser.id] || []).map((msg) => (
-                            <div 
-                              key={msg.id} 
-                              className={`flex flex-col ${msg.sender === 'me' ? 'items-end' : 'items-start'}`}
-                            >
+                          chatMessages.map((msg) => {
+                            const isMe = String(msg.senderId) === String(currentUser.id);
+                            return (
                               <div 
-                                className={`max-w-[85%] px-3 py-1.5 rounded-xl text-xs ${
-                                  msg.sender === 'me'
-                                    ? 'bg-[#004B6E] text-white rounded-br-none'
-                                    : 'bg-gray-100 text-gray-800 rounded-bl-none'
-                                }`}
+                                key={msg.id} 
+                                className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}
                               >
-                                {msg.text}
+                                <div 
+                                  className={`max-w-[85%] px-3 py-1.5 rounded-xl text-xs ${
+                                    isMe
+                                      ? 'bg-[#004B6E] text-white rounded-br-none'
+                                      : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                                  }`}
+                                >
+                                  {msg.text}
+                                </div>
+                                <span className="text-[9px] text-gray-400 mt-0.5 px-0.5">{formatTime(msg.createdAt)}</span>
                               </div>
-                              <span className="text-[9px] text-gray-400 mt-0.5 px-0.5">{msg.time}</span>
-                            </div>
-                          ))
+                            );
+                          })
                         )}
                       </div>
 
