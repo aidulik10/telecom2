@@ -11,11 +11,11 @@ export default function FixedServices() {
       description: "Մինչև 200 Մբ/վ ինտերնետ + 150-ից ավելի հեռուստաալիք",
       buttonText: "Միանալ առցանց",
       image: "https://www.telecomarmenia.am/images/sliders_block_slides/1/17775256210007.png",
-      bgClass: "bg-gradient-to-r from-cyan-50 via-teal-50 to-blue-100",
-      textColor: "text-slate-900",
-      descColor: "text-gray-700",
-      cardBg: "bg-white/90 border-cyan-200 shadow-md",
-      badgeBg: "bg-[#004B6E] text-white"
+      bgClass: "bg-gradient-to-r from-cyan-950 via-slate-900 to-[rgb(2,39,58)]",
+      textColor: "text-white",
+      descColor: "text-cyan-200",
+      cardBg: "bg-slate-900/90 border-cyan-800 shadow-xl",
+      badgeBg: "bg-cyan-400 text-slate-950 font-extrabold"
     },
     {
       badge: "ԿՈՍՄՈ 4",
@@ -23,11 +23,11 @@ export default function FixedServices() {
       description: "Զեղճը գործում է 16.07.2026թ - 16.10.2027թ միանալու դեպքում",
       buttonText: "Միանալ առցանց",
       image: "https://www.telecomarmenia.am/images/sliders_block_slides/1/17758194399312.png",
-      bgClass: "bg-gradient-to-r from-cyan-50 via-teal-50 to-blue-100",
-      textColor: "text-slate-900",
-      descColor: "text-gray-700",
-      cardBg: "bg-white/90 border-cyan-200 shadow-md",
-      badgeBg: "bg-[#004B6E] text-white"
+      bgClass: "bg-gradient-to-r from-cyan-950 via-slate-900 to-[rgb(2,39,58)]",
+      textColor: "text-white",
+      descColor: "text-cyan-200",
+      cardBg: "bg-slate-900/90 border-cyan-800 shadow-xl",
+      badgeBg: "bg-cyan-400 text-slate-950 font-extrabold"
     },
     {
       badge: "ԿՈՍՄՈ GIG",
@@ -35,10 +35,10 @@ export default function FixedServices() {
       description: "1 ԳԲ գերարագ ինտերնետ լավագույն Nokia սարքով",
       buttonText: "Միանալ առցանց",
       image: "https://www.telecomarmenia.am/images/sliders_block_slides/1/17767669719393.png",
-      bgClass: "bg-gradient-to-r from-slate-950 via-teal-950 to-cyan-950",
+      bgClass: "bg-gradient-to-r from-slate-950 via-teal-950 to-[rgb(2,39,58)]",
       textColor: "text-white",
       descColor: "text-cyan-200",
-      cardBg: "bg-slate-900/80 backdrop-blur-md border-cyan-800/50 shadow-xl",
+      cardBg: "bg-slate-900/90 border-cyan-800 shadow-xl",
       badgeBg: "bg-cyan-400 text-slate-950 font-extrabold"
     },
     {
@@ -47,19 +47,17 @@ export default function FixedServices() {
       description: "TCL QLED 55\" սմարթ TV",
       buttonText: "Միանալ առցանց",
       image: "https://www.telecomarmenia.am/images/sliders_block_slides/1/17857440992138.png",
-      bgClass: "bg-gradient-to-r from-cyan-50 via-teal-50 to-blue-100",
-      textColor: "text-slate-900",
-      descColor: "text-gray-700",
-      cardBg: "bg-white/90 border-cyan-200 shadow-md",
-      badgeBg: "bg-[#004B6E] text-white"
+      bgClass: "bg-gradient-to-r from-cyan-950 via-slate-900 to-[rgb(2,39,58)]",
+      textColor: "text-white",
+      descColor: "text-cyan-200",
+      cardBg: "bg-slate-900/90 border-cyan-800 shadow-xl",
+      badgeBg: "bg-cyan-400 text-slate-950 font-extrabold"
     }
   ];
 
   const cardsData = [
-    { title: "Ինտերնետ տան համար", desc: "Բարձր արագություն և կայուն կապ", icon: "🌐" },
-    { title: "Ժամանակակից TV", desc: "150+ ալիք և հարուստ մեդիադարդան", icon: "📺" },
-    { title: "Անսահմանափակ ինտերնետ", desc: "Միացեք առանց սահմանափակումների", icon: "♾️" },
-    { title: "GeForce Now", desc: "Ամպային խաղեր ուղղակի ձեր էկրանին", icon: "🎮" }
+    { title: "Անսահմանափակ ինտերնետ", desc: "Միացեք առանց սահմանափակումների", icon: "♾️", minHeight: "min-h-[770px]" },
+    { title: "GeForce Now", desc: "Ամպային խաղեր ուղղակի ձեր էկրանին", icon: "🎮", minHeight: "min-h-[570px]" }
   ];
 
   useEffect(() => {
@@ -75,13 +73,12 @@ export default function FixedServices() {
   const slide = banners[currentSlide];
 
   return (
-    <div className="w-full py-6 space-y-0 relative">
+    <div className="w-full py-6 space-y-0 relative bg-[rgb(2,39,58)] min-h-screen">
       
       {/* Слайдер баннеров */}
       <div className={`w-full ${slide.bgClass} py-12 px-4 md:px-12 shadow-sm relative overflow-hidden transition-all duration-700`}>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[340px]">
           
-          {/* Левая часть с текстом */}
           <div className={`space-y-6 ${slide.cardBg} p-8 rounded-2xl border z-10 transition-all duration-500`}>
             <span className={`inline-block ${slide.badgeBg} text-xs px-3 py-1 rounded-md font-bold uppercase tracking-wider`}>
               {slide.badge}
@@ -97,7 +94,6 @@ export default function FixedServices() {
             </button>
           </div>
 
-          {/* Правая часть с фотографией */}
           <div className="h-full flex items-center justify-center z-10">
             <img 
               src={slide.image} 
@@ -108,30 +104,28 @@ export default function FixedServices() {
 
         </div>
 
-        {/* Кнопки переключения слайдов */}
         <button 
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-cyan-950 p-3 rounded-full shadow-md transition z-20"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full shadow-md transition z-20"
           aria-label="Previous slide"
         >
           ❮
         </button>
         <button 
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-cyan-950 p-3 rounded-full shadow-md transition z-20"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full shadow-md transition z-20"
           aria-label="Next slide"
         >
           ❯
         </button>
 
-        {/* Точки-индикаторы снизу */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
           {banners.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition-all ${
-                currentSlide === index ? 'bg-cyan-400 w-6' : 'bg-cyan-900/30'
+                currentSlide === index ? 'bg-cyan-400 w-6' : 'bg-white/30'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -141,13 +135,11 @@ export default function FixedServices() {
 
       {/* Остров под баннером */}
       <div className="max-w-3xl mx-auto px-4 mt-2 relative z-30">
-        <div className="bg-white rounded-t-none rounded-b-3xl shadow-lg border-x border-b border-gray-100 py-4 px-6 flex justify-center items-center gap-8">
-          
-          {/* Кнопка Հիմնական */}
+        <div className="bg-slate-900 border border-cyan-800/50 rounded-t-none rounded-b-3xl shadow-lg py-4 px-6 flex justify-center items-center gap-8">
           <button
             onClick={() => setActiveTab('main')}
             className={`flex-1 py-2 text-center font-bold text-lg transition relative ${
-              activeTab === 'main' ? 'text-slate-900' : 'text-gray-400 hover:text-gray-600'
+              activeTab === 'main' ? 'text-white' : 'text-gray-400 hover:text-gray-200'
             }`}
           >
             Հիմնական
@@ -155,15 +147,11 @@ export default function FixedServices() {
               <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-20 h-1 bg-[#FF4B4B] rounded-full"></span>
             )}
           </button>
-
-          {/* Разделитель */}
-          <div className="w-px h-8 bg-gray-200"></div>
-
-          {/* Кнопка Մարզային */}
+          <div className="w-px h-8 bg-cyan-800/50"></div>
           <button
             onClick={() => setActiveTab('regional')}
             className={`flex-1 py-2 text-center font-bold text-lg transition relative ${
-              activeTab === 'regional' ? 'text-slate-900' : 'text-gray-400 hover:text-gray-600'
+              activeTab === 'regional' ? 'text-white' : 'text-gray-400 hover:text-gray-200'
             }`}
           >
             Մարզային
@@ -171,32 +159,135 @@ export default function FixedServices() {
               <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-20 h-1 bg-[#FF4B4B] rounded-full"></span>
             )}
           </button>
-
         </div>
       </div>
 
-    {/* Ультра-широкие длинные карточки (max-w-[1700px] с более квадратными углами) */}
-    <div className="max-w-[1700px] mx-auto px-4 mt-10">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {cardsData.map((card, idx) => (
-          <div 
-            key={idx} 
-            className="bg-white rounded-md p-10 shadow-md border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col justify-between min-h-[250px]"
-          >
+      {/* Карточки */}
+      <div className="max-w-7xl mx-auto px-4 mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
+          
+          {/* ПЕРВАЯ КАРТОЧКА (ԿՈՍՄՈ 2) - min-h-[440px] */}
+          <div className="bg-white rounded-md p-6 shadow-md border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between min-h-[440px]">
             <div>
-              <div className="text-3xl mb-4">{card.icon}</div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-3">{card.title}</h3>
-              <p className="text-gray-600 text-base">{card.desc}</p>
+              <h3 className="text-2xl font-bold mb-6 text-center">
+                <span className="text-[#FF4B4B]">ԿՈՍՄՈ</span> <span className="text-slate-900">2</span>
+              </h3>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <span className="text-lg">🛜</span>
+                  <span>250 Մբիթ/վրկ</span>
+                </div>
+
+                <div className="py-2 border-b border-gray-100 text-center">
+                  <div className="text-base font-bold text-slate-900">3,200</div>
+                  <p className="text-[10px] text-gray-500 leading-tight mt-0.5">
+                    1500 րոպեներ դեպի ՀՀ բոլոր ցանցեր, ԱՄՆ, Կանադա, ՌԴ Beeline և Tele2*
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <span className="text-lg">📱</span>
+                  <span>4 ԳԲ</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold">N</div>
+                  <span>Beacon 2</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 text-sm font-semibold text-slate-800">
+                  <span className="text-lg">📶</span>
+                  <span>3 Be Free</span>
+                </div>
+              </div>
             </div>
-            <div className="mt-8 pt-4 border-t border-gray-100">
-              <span className="text-[#004B6E] font-semibold text-base hover:underline cursor-pointer">
-                Подробнее →
-              </span>
+
+            <div className="flex justify-center pt-4 border-t border-gray-100 mt-4">
+              <button className="bg-[#FF4B4B] text-white font-bold py-2 px-8 rounded-xl hover:bg-opacity-90 transition shadow-sm text-sm">
+                Միանալ
+              </button>
             </div>
           </div>
-        ))}
+
+          {/* ВТОРАЯ КАРТОЧКА (ԿՈՍՄՈ 4) - min-h-[600px] */}
+          <div className="bg-white rounded-md p-6 shadow-md border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between min-h-[600px]">
+            <div>
+              <h3 className="text-2xl font-bold mb-6 text-center">
+                <span className="text-[#FF4B4B]">ԿՈՍՄՈ</span> <span className="text-slate-900">4</span>
+              </h3>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <span className="text-lg">🛜</span>
+                  <span>450 Մբիթ/վրկ</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <span className="w-5 h-5 bg-[#004B6E] text-white text-[10px] font-bold rounded-sm flex items-center justify-center">T</span>
+                  <span>150 ալիք</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <span className="text-lg">📱</span>
+                  <span>անսահմ․</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <span className="text-base">🎁</span>
+                  <span>5,000</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <span className="text-lg">✈️</span>
+                  <span>200 ՄԲ</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <span className="text-lg">📞</span>
+                  <span>180 րոպե</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm font-semibold text-slate-800">
+                  <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold">N</div>
+                  <span>Beacon 2</span>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 py-2 text-sm font-semibold text-slate-800">
+                  <span className="text-lg">📶</span>
+                  <span>3 Be Free</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center pt-4 border-t border-gray-100 mt-4">
+              <button className="bg-[#FF4B4B] text-white font-bold py-2 px-8 rounded-xl hover:bg-opacity-90 transition shadow-sm text-sm">
+                Միանալ
+              </button>
+            </div>
+          </div>
+
+          {/* ОСТАЛЬНЫЕ КАРТОЧКИ */}
+          {cardsData.map((card, idx) => (
+            <div 
+              key={idx} 
+              className={`bg-white rounded-md p-8 shadow-md border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between ${card.minHeight}`}
+            >
+              <div>
+                <div className="text-3xl mb-4">{card.icon}</div>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{card.title}</h3>
+                <p className="text-gray-600 text-sm">{card.desc}</p>
+              </div>
+              <div className="pt-4 border-t border-gray-100">
+                <span className="text-[#004B6E] font-semibold text-sm hover:underline cursor-pointer">
+                  Подробнее →
+                </span>
+              </div>
+            </div>
+          ))}
+
+        </div>
       </div>
-    </div>
 
     </div>
   );
