@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { CartProvider } from './context/CartContext';
 
-// Импорт всех страниц
 import Home from './pages/Home';
 import MobileServices from './pages/MobileServices';
 import FixedServices from './pages/FixedServices';
@@ -11,11 +11,11 @@ import News from './pages/News';
 import About from './pages/About';
 import Support from './pages/Support';
 import Profile from './pages/Profile';
+import Cart from './pages/Cart';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
 
-  // Логика отображения нужной страницы
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
@@ -34,18 +34,22 @@ export default function App() {
         return <Support />;
       case 'profile':
         return <Profile />;
+      case 'cart':
+        return <Cart setCurrentPage={setCurrentPage} />;
       default:
         return <Home setCurrentPage={setCurrentPage} />;
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header setCurrentPage={setCurrentPage} />
-      <main className="flex-grow">
-        {renderPage()}
-      </main>
-      <Footer setCurrentPage={setCurrentPage} />
-    </div>
+    <CartProvider>
+      <div className="flex flex-col min-h-screen bg-gray-50">
+        <Header setCurrentPage={setCurrentPage} />
+        <main className="flex-grow">
+          {renderPage()}
+        </main>
+        <Footer setCurrentPage={setCurrentPage} />
+      </div>
+    </CartProvider>
   );
 }

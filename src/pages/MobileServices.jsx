@@ -1,7 +1,10 @@
 ﻿import React, { useState } from 'react';
+import { Heart } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 export default function MobileServices() {
-  const [activePackage, setActivePackage] = useState('prepaid');
+const [activePackage, setActivePackage] = useState('prepaid');
+  const { cartItems, addToCart, removeFromCart } = useCart();
 
   // Иконки приложений (SVG)
   const socialIcons = {
@@ -225,11 +228,24 @@ export default function MobileServices() {
 
             {/* СПИСОК КАРТОЧЕК */}
             <div className="flex flex-col space-y-4">
-              {(activePackage === 'prepaid' ? prepaidCards : postpaidCards).map((card) => (
+              {(activePackage === 'prepaid' ? prepaidCards : postpaidCards).map((card) => {
+                const isInCart = cartItems.some((i) => i.title === card.title);
+                return (
                 <div 
                   key={card.id}
-                  className="w-full bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
+                  className="relative w-full bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
                 >
+                  <button
+                    onClick={() =>
+                      isInCart ? removeFromCart(card.title) : addToCart(card)
+                    }
+                    className="absolute top-4 right-4 z-10 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm transition-colors"
+                  >
+                    <Heart
+                      size={20}
+                      className={isInCart ? 'fill-red-500 text-red-500' : 'text-gray-400'}
+                    />
+                  </button>
                   {/* Основные 5 колонок */}
                   <div className="grid grid-cols-1 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-gray-100 items-center p-5 gap-3 md:gap-0">
                     
@@ -287,7 +303,8 @@ export default function MobileServices() {
                   )}
 
                 </div>
-              ))}
+                );
+              })}
             </div>
 
           </div>

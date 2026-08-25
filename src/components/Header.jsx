@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
-import { User, Search, CreditCard, ShoppingBag, X } from 'lucide-react';
+import { User, Search, CreditCard, ShoppingBag, ShoppingCart, X } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 // Словарь переводов для текста в шапке
 const translations = {
@@ -283,6 +284,9 @@ export default function Header({ setCurrentPage }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Корзина
+  const { totalCount } = useCart();
+
   // Текстовый контент согласно выбранному языку
   const t = translations[currentLang];
 
@@ -394,6 +398,21 @@ export default function Header({ setCurrentPage }) {
                 className={`hover:text-white transition-colors ${currentLang === 'Eng' ? 'text-white font-bold' : 'text-white/60'}`}
               >
                 Eng
+              </button>
+            </div>
+
+                        {/* Корзина */}
+            <div className="pl-3 sm:pl-4 border-l border-white/20">
+              <button 
+                onClick={() => handleNavigation('cart')} 
+                className="relative flex items-center space-x-2 text-white/90 hover:text-white transition-colors"
+              >
+                <ShoppingCart size={18} />
+                {totalCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#FF4B4B] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                    {totalCount}
+                  </span>
+                )}
               </button>
             </div>
 

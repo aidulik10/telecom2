@@ -1,6 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { useCart } from '../context/CartContext';
 
 export default function Devices() {
+  const { addToCart } = useCart();
+
   const items = [
     { 
       title: 'Apple iPhone 17e',
@@ -217,8 +220,10 @@ export default function Devices() {
                     <div className="w-full h-[1px] bg-gray-200 mb-3"></div>
                     <p className="text-xs text-gray-500 whitespace-pre-line mb-3">{item.credit}</p>
                   </div>
-                  <button className="w-full bg-[#FF4B4B] text-white text-xs py-3 rounded-lg font-bold flex items-center justify-center gap-1.5 hover:bg-[#e03a3a] transition">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <button 
+                    onClick={() => addToCart(item)}
+                    className="w-full bg-[#FF4B4B] text-white text-xs py-3 rounded-lg font-bold flex items-center justify-center gap-1.5 hover:bg-[#e03a3a] transition"
+                  >                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     Ավելացնել զամբյուղ
