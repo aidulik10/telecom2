@@ -19,7 +19,7 @@ const translations = {
         items: [
           { name: 'Բջջային կապ', page: 'mobile' },
           { name: 'Ինտերնետ և TV ԿՈՍՄՈ', page: 'fixed' },
-          { name: 'Ինտերնետ և TV ԿՈՄԲՈ', page: 'fixed' },
+          { name: 'Ինտերնետ և TV ԿՈՄԲՈ', page: 'combo' },
           { name: 'Ֆիքսված հեռախոսակապ', page: 'fixed' },
         ],
       },
@@ -30,7 +30,7 @@ const translations = {
         items: [
           { name: 'Սմարտֆոնի համար', page: 'mobile' },
           { name: 'Տան համար - ԿՈՍՄՈ', page: 'fixed' },
-          { name: 'Տան համար - ԿՈՄԲՈ', page: 'fixed' },
+          { name: 'Տան համար - ԿՈՄԲՈ', page: 'combo' },
           { name: 'Համակարգչի/պլանշետի համար', page: 'fixed' },
           { name: 'Team 5G', page: 'news' },
         ],

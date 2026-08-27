@@ -6,6 +6,7 @@ import { CartProvider } from './context/CartContext';
 import Home from './pages/Home';
 import MobileServices from './pages/MobileServices';
 import FixedServices from './pages/FixedServices';
+import ComboServices from './pages/ComboServices';
 import Devices from './pages/Devices';
 import News from './pages/News';
 import About from './pages/About';
@@ -24,6 +25,8 @@ export default function App() {
         return <MobileServices />;
       case 'fixed':
         return <FixedServices />;
+      case 'combo':
+        return <ComboServices />;
       case 'devices':
         return <Devices />;
       case 'news':
