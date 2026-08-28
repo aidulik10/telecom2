@@ -26,13 +26,13 @@ const translations = {
       {
         id: 'internet',
         name: 'Ինտերնետ',
-        page: 'fixed',
+        page: 'internet',
         items: [
-          { name: 'Սմարտֆոնի համար', page: 'mobile' },
-          { name: 'Տան համար - ԿՈՍՄՈ', page: 'fixed' },
+          { name: 'Սմարտֆոնի համար', page: 'internet-smartphone' },
+          { name: 'Տան համար - ԿՈՍՄՈ', page: 'internet-kosmo' },
           { name: 'Տան համար - ԿՈՄԲՈ', page: 'combo' },
-          { name: 'Համակարգչի/պլանշետի համար', page: 'fixed' },
-          { name: 'Team 5G', page: 'news' },
+          { name: 'Համակարգչի/պլանշետի համար', page: 'internet-pc-tablet' },
+          { name: 'Team 5G', page: 'team-5g' },
         ],
       },
       {
@@ -40,22 +40,22 @@ const translations = {
         name: 'Ծառայություններ',
         page: 'services',
         items: [
-          { name: 'Team TV', page: 'fixed' },
-          { name: 'Վճարում և համալրում', page: 'profile' },
-          { name: 'Զվարճանք', page: 'services' },
-          { name: 'Զանգեր և անվտանգություն', page: 'services' },
-          { name: 'Ֆիքսված հեռախոսակապ', page: 'fixed' },
+          { name: 'Team TV', page: 'service-teamtv' },
+          { name: 'Վճարում և համալրում', page: 'service-payment' },
+          { name: 'Զվարճանք', page: 'service-entertainment' },
+          { name: 'Զանգեր և անվտանգություն', page: 'service-security' },
+          { name: 'Ֆիքսված հեռախոսակապ', page: 'service-fixed-phone' },
         ],
       },
       {
         id: 'roaming',
         name: 'Ռոումինգ',
-        page: 'mobile',
+        page: 'roaming',
         items: [
-          { name: 'Ռոումինգ', page: 'mobile' },
-          { name: 'Միջազգային կապ', page: 'mobile' },
-          { name: 'Օգտակար տեղեկատվություն', page: 'support' },
-          { name: 'Ծառայություններ', page: 'services' },
+          { name: 'Ռոումինգ', page: 'roaming' },
+          { name: 'Միջազգային կապ', page: 'roaming-international' },
+          { name: 'Օգտակար տեղեկատվություն', page: 'roaming-info' },
+          { name: 'Ծառայություններ', page: 'roaming-addons' },
         ],
       },
       {
@@ -63,9 +63,9 @@ const translations = {
         name: 'Առցանց խանութ',
         page: 'devices',
         items: [
-          { name: 'E-shop', page: 'devices' },
-          { name: 'Առցանց ապառիկ', page: 'devices' },
-          { name: 'Բաժանորդագրություն', page: 'devices' },
+          { name: 'E-shop', page: 'eshop' },
+          { name: 'Առցանց ապառիկ', page: 'online-credit' },
+          { name: 'Բաժանորդագրություն', page: 'subscriptions' },
         ],
       },
       {
@@ -73,12 +73,12 @@ const translations = {
         name: 'Առաջարկներ',
         page: 'news',
         items: [
-          { name: 'Շեյքի՛ր և Շահի՛ր', page: 'news' },
-          { name: 'Team Բոնուս', page: 'news' },
-          { name: 'Ակցիաներ', page: 'news' },
-          { name: 'MobiBattle', page: 'news' },
-          { name: 'GeForce Games', page: 'news' },
-          { name: 'Koreez', page: 'news' },
+          { name: 'Շեյքի՛ր և Շահի՛ր', page: 'shake-win' },
+          { name: 'Team Բոնուս', page: 'team-bonus' },
+          { name: 'Ակցիաներ', page: 'promotions' },
+          { name: 'MobiBattle', page: 'mobibattle' },
+          { name: 'GeForce Games', page: 'geforce-games' },
+          { name: 'Koreez', page: 'koreez' },
         ],
       },
       {
@@ -86,10 +86,10 @@ const translations = {
         name: 'Օգնություն',
         page: 'support',
         items: [
-          { name: 'Հաճախ տրվող հարցեր', page: 'support' },
-          { name: 'Սարքերի կարգավորումներ', page: 'support' },
-          { name: 'Բաժանորդային սպասարկում', page: 'support' },
-          { name: 'USSD հրահանգներ և օգտակար համարներ', page: 'support' },
+          { name: 'Հաճախ տրվող հարցեր', page: 'faq' },
+          { name: 'Սարքերի կարգավորումներ', page: 'device-settings' },
+          { name: 'Բաժանորդային սպասարկում', page: 'customer-service' },
+          { name: 'USSD հրահանգներ և օգտակար համարներ', page: 'ussd' },
         ],
       },
     ],
@@ -109,20 +109,20 @@ const translations = {
         items: [
           { name: 'Мобильная связь', page: 'mobile' },
           { name: 'Интернет и TV КОСМО', page: 'fixed' },
-          { name: 'Интернет и TV КОМБО', page: 'fixed' },
+          { name: 'Интернет и TV КОМБО', page: 'combo' },
           { name: 'Фиксированная связь', page: 'fixed' },
         ],
       },
       {
         id: 'internet',
         name: 'Интернет',
-        page: 'fixed',
+        page: 'internet',
         items: [
-          { name: 'Для смартфона', page: 'mobile' },
-          { name: 'Для дома - КОСМО', page: 'fixed' },
-          { name: 'Для дома - КОМБО', page: 'fixed' },
-          { name: 'Для ПК/планшета', page: 'fixed' },
-          { name: 'Team 5G', page: 'news' },
+          { name: 'Для смартфона', page: 'internet-smartphone' },
+          { name: 'Для дома - КОСМО', page: 'internet-kosmo' },
+          { name: 'Для дома - КОМБО', page: 'combo' },
+          { name: 'Для ПК/планшета', page: 'internet-pc-tablet' },
+          { name: 'Team 5G', page: 'team-5g' },
         ],
       },
       {
@@ -130,22 +130,22 @@ const translations = {
         name: 'Услуги',
         page: 'services',
         items: [
-          { name: 'Team TV', page: 'fixed' },
-          { name: 'Оплата и пополнение', page: 'profile' },
-          { name: 'Развлечения', page: 'services' },
-          { name: 'Звонки и безопасность', page: 'services' },
-          { name: 'Фиксированная связь', page: 'fixed' },
+          { name: 'Team TV', page: 'service-teamtv' },
+          { name: 'Оплата и пополнение', page: 'service-payment' },
+          { name: 'Развлечения', page: 'service-entertainment' },
+          { name: 'Звонки и безопасность', page: 'service-security' },
+          { name: 'Фиксированная связь', page: 'service-fixed-phone' },
         ],
       },
       {
         id: 'roaming',
         name: 'Роуминг',
-        page: 'mobile',
+        page: 'roaming',
         items: [
-          { name: 'Роуминг', page: 'mobile' },
-          { name: 'Международная связь', page: 'mobile' },
-          { name: 'Полезная информация', page: 'support' },
-          { name: 'Услуги', page: 'services' },
+          { name: 'Роуминг', page: 'roaming' },
+          { name: 'Международная связь', page: 'roaming-international' },
+          { name: 'Полезная информация', page: 'roaming-info' },
+          { name: 'Услуги', page: 'roaming-addons' },
         ],
       },
       {
@@ -153,9 +153,9 @@ const translations = {
         name: 'Интернет-магазин',
         page: 'devices',
         items: [
-          { name: 'E-shop', page: 'devices' },
-          { name: 'Онлайн кредит', page: 'devices' },
-          { name: 'Подписки', page: 'devices' },
+          { name: 'E-shop', page: 'eshop' },
+          { name: 'Онлайн кредит', page: 'online-credit' },
+          { name: 'Подписки', page: 'subscriptions' },
         ],
       },
       {
@@ -163,12 +163,12 @@ const translations = {
         name: 'Предложения',
         page: 'news',
         items: [
-          { name: 'Шейк и Выигрывай', page: 'news' },
-          { name: 'Team Бонус', page: 'news' },
-          { name: 'Акции', page: 'news' },
-          { name: 'MobiBattle', page: 'news' },
-          { name: 'GeForce Games', page: 'news' },
-          { name: 'Koreez', page: 'news' },
+          { name: 'Шейк и Выигрывай', page: 'shake-win' },
+          { name: 'Team Бонус', page: 'team-bonus' },
+          { name: 'Акции', page: 'promotions' },
+          { name: 'MobiBattle', page: 'mobibattle' },
+          { name: 'GeForce Games', page: 'geforce-games' },
+          { name: 'Koreez', page: 'koreez' },
         ],
       },
       {
@@ -176,10 +176,10 @@ const translations = {
         name: 'Помощь',
         page: 'support',
         items: [
-          { name: 'Часто задаваемые вопросы', page: 'support' },
-          { name: 'Настройки устройств', page: 'support' },
-          { name: 'Обслуживание абонентов', page: 'support' },
-          { name: 'USSD команды и номера', page: 'support' },
+          { name: 'Часто задаваемые вопросы', page: 'faq' },
+          { name: 'Настройки устройств', page: 'device-settings' },
+          { name: 'Обслуживание абонентов', page: 'customer-service' },
+          { name: 'USSD команды и номера', page: 'ussd' },
         ],
       },
     ],
@@ -199,20 +199,20 @@ const translations = {
         items: [
           { name: 'Mobile Connection', page: 'mobile' },
           { name: 'Internet & TV KOSMO', page: 'fixed' },
-          { name: 'Internet & TV COMBO', page: 'fixed' },
+          { name: 'Internet & TV COMBO', page: 'combo' },
           { name: 'Fixed Connection', page: 'fixed' },
         ],
       },
       {
         id: 'internet',
         name: 'Internet',
-        page: 'fixed',
+        page: 'internet',
         items: [
-          { name: 'For Smartphone', page: 'mobile' },
-          { name: 'For Home - KOSMO', page: 'fixed' },
-          { name: 'For Home - COMBO', page: 'fixed' },
-          { name: 'For PC/Tablet', page: 'fixed' },
-          { name: 'Team 5G', page: 'news' },
+          { name: 'For Smartphone', page: 'internet-smartphone' },
+          { name: 'For Home - KOSMO', page: 'internet-kosmo' },
+          { name: 'For Home - COMBO', page: 'combo' },
+          { name: 'For PC/Tablet', page: 'internet-pc-tablet' },
+          { name: 'Team 5G', page: 'team-5g' },
         ],
       },
       {
@@ -220,22 +220,22 @@ const translations = {
         name: 'Services',
         page: 'services',
         items: [
-          { name: 'Team TV', page: 'fixed' },
-          { name: 'Payment & Top-up', page: 'profile' },
-          { name: 'Entertainment', page: 'services' },
-          { name: 'Calls & Security', page: 'services' },
-          { name: 'Fixed Connection', page: 'fixed' },
+          { name: 'Team TV', page: 'service-teamtv' },
+          { name: 'Payment & Top-up', page: 'service-payment' },
+          { name: 'Entertainment', page: 'service-entertainment' },
+          { name: 'Calls & Security', page: 'service-security' },
+          { name: 'Fixed Connection', page: 'service-fixed-phone' },
         ],
       },
       {
         id: 'roaming',
         name: 'Roaming',
-        page: 'mobile',
+        page: 'roaming',
         items: [
-          { name: 'Roaming', page: 'mobile' },
-          { name: 'International Calls', page: 'mobile' },
-          { name: 'Useful Info', page: 'support' },
-          { name: 'Services', page: 'services' },
+          { name: 'Roaming', page: 'roaming' },
+          { name: 'International Calls', page: 'roaming-international' },
+          { name: 'Useful Info', page: 'roaming-info' },
+          { name: 'Services', page: 'roaming-addons' },
         ],
       },
       {
@@ -243,9 +243,9 @@ const translations = {
         name: 'Online Shop',
         page: 'devices',
         items: [
-          { name: 'E-shop', page: 'devices' },
-          { name: 'Online Credit', page: 'devices' },
-          { name: 'Subscriptions', page: 'devices' },
+          { name: 'E-shop', page: 'eshop' },
+          { name: 'Online Credit', page: 'online-credit' },
+          { name: 'Subscriptions', page: 'subscriptions' },
         ],
       },
       {
@@ -253,12 +253,12 @@ const translations = {
         name: 'Offers',
         page: 'news',
         items: [
-          { name: 'Shake & Win', page: 'news' },
-          { name: 'Team Bonus', page: 'news' },
-          { name: 'Promotions', page: 'news' },
-          { name: 'MobiBattle', page: 'news' },
-          { name: 'GeForce Games', page: 'news' },
-          { name: 'Koreez', page: 'news' },
+          { name: 'Shake & Win', page: 'shake-win' },
+          { name: 'Team Bonus', page: 'team-bonus' },
+          { name: 'Promotions', page: 'promotions' },
+          { name: 'MobiBattle', page: 'mobibattle' },
+          { name: 'GeForce Games', page: 'geforce-games' },
+          { name: 'Koreez', page: 'koreez' },
         ],
       },
       {
@@ -266,10 +266,10 @@ const translations = {
         name: 'Help',
         page: 'support',
         items: [
-          { name: 'FAQ', page: 'support' },
-          { name: 'Device Settings', page: 'support' },
-          { name: 'Customer Support', page: 'support' },
-          { name: 'USSD Commands & Numbers', page: 'support' },
+          { name: 'FAQ', page: 'faq' },
+          { name: 'Device Settings', page: 'device-settings' },
+          { name: 'Customer Support', page: 'customer-service' },
+          { name: 'USSD Commands & Numbers', page: 'ussd' },
         ],
       },
     ],
@@ -279,7 +279,7 @@ const translations = {
 export default function Header({ setCurrentPage }) {
   const [hoveredTab, setHoveredTab] = useState(null);
   const [currentLang, setCurrentLang] = useState('Հայ');
-  
+
   // Поиск
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -311,24 +311,24 @@ export default function Header({ setCurrentPage }) {
       {/* 1. Верхняя тёмно-синяя шапка */}
       <div className="bg-[#004B6E] text-white px-4 py-2">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          
+
           {/* Левая часть */}
           <div className="flex items-center space-x-6 text-sm font-semibold">
-            <button 
+            <button
               onClick={() => handleNavigation('home')}
               className="text-white/80 hover:text-white transition-colors"
             >
               {t.individuals}
             </button>
 
-            <button 
+            <button
               onClick={() => handleNavigation('support')}
               className="text-white/80 hover:text-white transition-colors"
             >
               {t.business}
             </button>
 
-            <button 
+            <button
               onClick={() => handleNavigation('devices')}
               className="flex items-center space-x-1.5 text-white/80 hover:text-white transition-colors"
             >
@@ -339,12 +339,12 @@ export default function Header({ setCurrentPage }) {
 
           {/* Правая часть */}
           <div className="flex items-center text-xs sm:text-sm font-medium">
-            
+
             {/* Поиск с круглым полем */}
             <div className="border-r border-white/20 pr-3 sm:pr-4 flex items-center">
               <div className="relative flex items-center">
-                <form 
-                  onSubmit={handleSearchSubmit} 
+                <form
+                  onSubmit={handleSearchSubmit}
                   className={`transition-all duration-300 ease-in-out overflow-hidden flex items-center relative ${
                     isSearchOpen ? 'w-36 sm:w-44 opacity-100 mr-2' : 'w-0 opacity-0 mr-0'
                   }`}
@@ -367,7 +367,7 @@ export default function Header({ setCurrentPage }) {
                   )}
                 </form>
 
-                <button 
+                <button
                   type="button"
                   onClick={() => setIsSearchOpen(!isSearchOpen)}
                   className="text-white/80 hover:text-white transition-colors flex items-center p-1"
@@ -379,21 +379,21 @@ export default function Header({ setCurrentPage }) {
 
             {/* Переключатель языков */}
             <div className="flex items-center px-3 sm:px-4 border-r border-white/20 space-x-2">
-              <button 
+              <button
                 onClick={() => setCurrentLang('Հայ')}
                 className={`hover:text-white transition-colors ${currentLang === 'Հայ' ? 'text-white font-bold' : 'text-white/60'}`}
               >
                 Հայ
               </button>
               <span className="text-white/30 text-xs">|</span>
-              <button 
+              <button
                 onClick={() => setCurrentLang('Рус')}
                 className={`hover:text-white transition-colors ${currentLang === 'Рус' ? 'text-white font-bold' : 'text-white/60'}`}
               >
                 Рус
               </button>
               <span className="text-white/30 text-xs">|</span>
-              <button 
+              <button
                 onClick={() => setCurrentLang('Eng')}
                 className={`hover:text-white transition-colors ${currentLang === 'Eng' ? 'text-white font-bold' : 'text-white/60'}`}
               >
@@ -401,10 +401,10 @@ export default function Header({ setCurrentPage }) {
               </button>
             </div>
 
-                        {/* Корзина */}
+            {/* Корзина */}
             <div className="pl-3 sm:pl-4 border-l border-white/20">
-              <button 
-                onClick={() => handleNavigation('cart')} 
+              <button
+                onClick={() => handleNavigation('cart')}
                 className="relative flex items-center space-x-2 text-white/90 hover:text-white transition-colors"
               >
                 <ShoppingCart size={18} />
@@ -418,8 +418,8 @@ export default function Header({ setCurrentPage }) {
 
             {/* Личный кабинет */}
             <div className="pl-3 sm:pl-4">
-              <button 
-                onClick={() => handleNavigation('profile')} 
+              <button
+                onClick={() => handleNavigation('profile')}
                 className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors"
               >
                 <User size={18} />
@@ -435,9 +435,9 @@ export default function Header({ setCurrentPage }) {
       {/* 2. Вторая белая шапка */}
       <div className="bg-white border-b border-gray-200 px-4 py-2 relative">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
-          
-          <div 
-            onClick={() => handleNavigation('home')} 
+
+          <div
+            onClick={() => handleNavigation('home')}
             className="flex flex-col cursor-pointer select-none group shrink-0"
           >
             <span className="text-2xl font-black uppercase tracking-wider text-[#004B6E] leading-none group-hover:opacity-80 transition-opacity">
@@ -451,8 +451,8 @@ export default function Header({ setCurrentPage }) {
           {/* Навигация с динамическим переводом */}
           <nav className="flex items-center gap-1 md:gap-2">
             {t.menu.map((menuItem) => (
-              <div 
-                key={menuItem.id} 
+              <div
+                key={menuItem.id}
                 className="relative"
                 onMouseEnter={() => setHoveredTab(menuItem.id)}
                 onMouseLeave={() => setHoveredTab(null)}
@@ -498,8 +498,8 @@ export default function Header({ setCurrentPage }) {
           </nav>
 
           {/* Кнопка оплаты */}
-          <div 
-            onClick={() => handleNavigation('profile')} 
+          <div
+            onClick={() => handleNavigation('profile')}
             className="bg-[#004B6E] text-white h-10 w-10 hover:w-32 rounded-xl shadow-sm flex items-center justify-start px-2.5 cursor-pointer select-none transition-all duration-300 ease-in-out group overflow-hidden shrink-0"
           >
             <CreditCard size={20} className="shrink-0 text-white group-hover:text-emerald-400 transition-colors" />
