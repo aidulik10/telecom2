@@ -2,8 +2,8 @@
 
 export default function Footer({ setCurrentPage }) {
   return (
-    <footer className="bg-slate-900 text-white mt-auto py-12 px-4 border-t border-slate-800">
-      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+    <footer className="bg-slate-900 text-white mt-auto py-10 sm:py-12 px-4 border-t border-slate-800">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center sm:text-left">
         <div>
           <h5 className="font-bold text-gray-400 mb-3 text-sm uppercase">Ծառայություններ</h5>
           <ul className="space-y-2 text-sm text-gray-300">
@@ -36,8 +36,8 @@ export default function Footer({ setCurrentPage }) {
           </ul>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-slate-800 text-center text-xs text-gray-500">
-         {new Date().getFullYear()} Телеком Провайдер Шаблон. Все права защищены.
+      <div className="max-w-7xl mx-auto mt-10 sm:mt-12 pt-6 border-t border-slate-800 text-center text-xs text-gray-500 px-2">
+        © {new Date().getFullYear()} Телеком Провайдер Шаблон. Все права защищены.
       </div>
     </footer>
   );

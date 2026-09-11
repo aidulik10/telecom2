@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { User, Search, CreditCard, ShoppingBag, ShoppingCart, X } from 'lucide-react';
+import { User, Search, CreditCard, ShoppingBag, ShoppingCart, X, Menu, ChevronDown } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 // Словарь переводов для текста в шапке
@@ -284,6 +284,10 @@ export default function Header({ setCurrentPage }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Мобильное меню
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileExpandedId, setMobileExpandedId] = useState(null);
+
   // Корзина
   const { totalCount } = useCart();
 
@@ -294,6 +298,8 @@ export default function Header({ setCurrentPage }) {
     if (pageId) {
       setCurrentPage(pageId);
       setHoveredTab(null);
+      setIsMobileMenuOpen(false);
+      setMobileExpandedId(null);
     }
   };
 
@@ -306,10 +312,14 @@ export default function Header({ setCurrentPage }) {
     }
   };
 
+  const toggleMobileSection = (id) => {
+    setMobileExpandedId((prev) => (prev === id ? null : id));
+  };
+
   return (
     <header className="sticky top-0 z-50 shadow-md">
-      {/* 1. Верхняя тёмно-синяя шапка */}
-      <div className="bg-[#004B6E] text-white px-4 py-2">
+      {/* 1. Верхняя тёмно-синяя шапка — скрыта до экранов lg (1024px) */}
+      <div className="hidden lg:block bg-[#004B6E] text-white px-4 py-2">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
 
           {/* Левая часть */}
@@ -423,7 +433,7 @@ export default function Header({ setCurrentPage }) {
                 className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors"
               >
                 <User size={18} />
-                <span className="hidden md:inline font-semibold">{t.cabinet}</span>
+                <span className="hidden lg:inline font-semibold">{t.cabinet}</span>
               </button>
             </div>
 
@@ -434,22 +444,31 @@ export default function Header({ setCurrentPage }) {
 
       {/* 2. Вторая белая шапка */}
       <div className="bg-white border-b border-gray-200 px-4 py-2 relative">
-        <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center gap-2 sm:gap-4">
+
+          {/* Гамбургер — виден до экранов lg (1024px) */}
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden text-[#004B6E] p-1 shrink-0"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
 
           <div
             onClick={() => handleNavigation('home')}
             className="flex flex-col cursor-pointer select-none group shrink-0"
           >
-            <span className="text-2xl font-black uppercase tracking-wider text-[#004B6E] leading-none group-hover:opacity-80 transition-opacity">
+            <span className="text-xl sm:text-2xl font-black uppercase tracking-wider text-[#004B6E] leading-none group-hover:opacity-80 transition-opacity">
               TEAM
             </span>
-            <span className="text-[10px] uppercase tracking-widest font-semibold text-gray-500 mt-0.5 leading-none">
+            <span className="hidden sm:block text-[10px] uppercase tracking-widest font-semibold text-gray-500 mt-0.5 leading-none">
               Telecom Armenia
             </span>
           </div>
 
-          {/* Навигация с динамическим переводом */}
-          <nav className="flex items-center gap-1 md:gap-2">
+          {/* Десктопная навигация — появляется только с lg (1024px) */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
             {t.menu.map((menuItem) => (
               <div
                 key={menuItem.id}
@@ -460,7 +479,7 @@ export default function Header({ setCurrentPage }) {
                 <button
                   type="button"
                   onClick={() => handleNavigation(menuItem.page)}
-                  className={`px-3 py-1.5 text-xs md:text-sm font-bold rounded-md transition-all relative ${
+                  className={`px-3 py-1.5 text-xs xl:text-sm font-bold rounded-md transition-all relative ${
                     hoveredTab === menuItem.id
                       ? 'text-[#004B6E] bg-gray-100/80'
                       : 'text-gray-600 hover:text-[#004B6E]'
@@ -497,10 +516,28 @@ export default function Header({ setCurrentPage }) {
             ))}
           </nav>
 
-          {/* Кнопка оплаты */}
+          {/* Правая группа на экранах меньше lg: поиск-иконка, корзина, кабинет */}
+          <div className="flex lg:hidden items-center gap-3 shrink-0">
+            <button type="button" onClick={() => setIsSearchOpen(!isSearchOpen)} className="text-[#004B6E]">
+              <Search size={20} />
+            </button>
+            <button onClick={() => handleNavigation('cart')} className="relative text-[#004B6E]">
+              <ShoppingCart size={20} />
+              {totalCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#FF4B4B] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                  {totalCount}
+                </span>
+              )}
+            </button>
+            <button onClick={() => handleNavigation('profile')} className="text-[#004B6E]">
+              <User size={20} />
+            </button>
+          </div>
+
+          {/* Кнопка оплаты — скрыта на самых узких экранах, появляется постепенно шире */}
           <div
             onClick={() => handleNavigation('profile')}
-            className="bg-[#004B6E] text-white h-10 w-10 hover:w-32 rounded-xl shadow-sm flex items-center justify-start px-2.5 cursor-pointer select-none transition-all duration-300 ease-in-out group overflow-hidden shrink-0"
+            className="hidden sm:flex bg-[#004B6E] text-white h-10 w-10 hover:w-32 rounded-xl shadow-sm items-center justify-start px-2.5 cursor-pointer select-none transition-all duration-300 ease-in-out group overflow-hidden shrink-0"
           >
             <CreditCard size={20} className="shrink-0 text-white group-hover:text-emerald-400 transition-colors" />
             <span className="font-bold text-sm ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
@@ -509,7 +546,108 @@ export default function Header({ setCurrentPage }) {
           </div>
 
         </div>
+
+        {/* Мобильный поиск (раскрывается под шапкой) — до lg */}
+        {isSearchOpen && (
+          <form
+            onSubmit={handleSearchSubmit}
+            className="lg:hidden max-w-7xl mx-auto mt-2 flex items-center relative"
+          >
+            <input
+              type="text"
+              autoFocus
+              placeholder={t.searchPlaceholder}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-gray-100 text-[#004B6E] placeholder-gray-400 text-sm px-4 py-2 pr-8 rounded-full outline-none"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 text-gray-400 hover:text-gray-600"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </form>
+        )}
       </div>
+
+      {/* 3. Мобильное выпадающее меню на всю ширину — видно до lg */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-white border-b border-gray-200 shadow-lg max-h-[75vh] overflow-y-auto">
+          {/* Ссылки верхней панели, перенесённые в мобильное меню */}
+          <div className="flex items-center justify-around px-4 py-3 bg-[#004B6E] text-white text-xs font-semibold">
+            <button onClick={() => handleNavigation('home')}>{t.individuals}</button>
+            <button onClick={() => handleNavigation('support')}>{t.business}</button>
+            <button onClick={() => handleNavigation('devices')} className="flex items-center gap-1">
+              <ShoppingBag size={14} className="text-[#FF4B4B]" />
+              {t.eshop}
+            </button>
+          </div>
+
+          {/* Переключатель языков */}
+          <div className="flex items-center justify-center gap-3 py-2 border-b border-gray-100 text-sm">
+            {['Հայ', 'Рус', 'Eng'].map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setCurrentLang(lang)}
+                className={`px-2 py-0.5 rounded-full transition-colors ${
+                  currentLang === lang ? 'bg-[#004B6E] text-white font-bold' : 'text-gray-500'
+                }`}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
+
+          {/* Разделы меню */}
+          <nav className="px-2 py-2">
+            {t.menu.map((menuItem) => (
+              <div key={menuItem.id} className="border-b border-gray-100 last:border-b-0">
+                <button
+                  type="button"
+                  onClick={() => toggleMobileSection(menuItem.id)}
+                  className="w-full flex items-center justify-between px-2 py-3 text-sm font-bold text-gray-700"
+                >
+                  {menuItem.name}
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform ${mobileExpandedId === menuItem.id ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {mobileExpandedId === menuItem.id && menuItem.items && (
+                  <ul className="pb-2 pl-4">
+                    {menuItem.items.map((subItem, subIdx) => (
+                      <li key={subIdx}>
+                        <button
+                          type="button"
+                          onClick={() => handleNavigation(subItem.page)}
+                          className="w-full text-left px-2 py-2 text-xs font-medium text-gray-600 hover:text-[#004B6E]"
+                        >
+                          {subItem.name}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </nav>
+
+          {/* Кнопка оплаты */}
+          <div className="px-4 py-3">
+            <button
+              onClick={() => handleNavigation('profile')}
+              className="w-full bg-[#004B6E] text-white rounded-xl py-2.5 flex items-center justify-center gap-2 font-bold text-sm"
+            >
+              <CreditCard size={18} />
+              {t.pay}
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
