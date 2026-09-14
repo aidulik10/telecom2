@@ -1,6 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { Phone, Globe, Smartphone, Tv, ChevronLeft, ChevronRight, MessageCircle, X, Send, User, Circle, Search, Video, PhoneOff, PhoneIncoming } from 'lucide-react';
-import DailyIframe from '@daily-co/daily-js';
 import {
   subscribeToUsers,
   subscribeToMessages,
@@ -13,6 +12,20 @@ import {
   acceptCall,
   endCall
 } from '../services/chatService';
+
+function loadJitsiScript() {
+  return new Promise((resolve) => {
+    if (window.JitsiMeetExternalAPI) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://meet.jit.si/external_api.js';
+    script.async = true;
+    script.onload = () => resolve();
+    document.body.appendChild(script);
+  });
+}
 
 export default function Home({ setCurrentPage }) {
   // Массив баннеров
@@ -175,25 +188,35 @@ export default function Home({ setCurrentPage }) {
     return () => unsubscribeCall();
   }, [selectedUser, currentUser]);
 
-  // Подключение / отключение окна звонка (Daily.co)
+  // Подключение / отключение окна звонка (Jitsi Meet)
   useEffect(() => {
-    if (callState?.status === 'active' && callState.roomUrl && callContainerRef.current) {
+    if (callState?.status === 'active' && callState.roomName && callContainerRef.current) {
       if (!callFrameRef.current) {
-        callFrameRef.current = DailyIframe.createFrame(callContainerRef.current, {
-          showLeaveButton: true,
-          iframeStyle: { width: '100%', height: '100%', border: '0' }
-        });
-        callFrameRef.current.join({ url: callState.roomUrl });
-        callFrameRef.current.on('left-meeting', () => {
-          if (selectedUser && currentUser) {
-            const chatId = getChatId(currentUser.id, selectedUser.id);
-            endCall(chatId);
-          }
+        loadJitsiScript().then(() => {
+          if (!callContainerRef.current) return;
+          const api = new window.JitsiMeetExternalAPI('meet.jit.si', {
+            roomName: callState.roomName,
+            parentNode: callContainerRef.current,
+            width: '100%',
+            height: '100%',
+            userInfo: { displayName: currentUser?.name || 'Օգտատեր' },
+            configOverwrite: {
+              startAudioOnly: callState.type === 'audio',
+              prejoinPageEnabled: false
+            }
+          });
+          callFrameRef.current = api;
+          api.addListener('videoConferenceLeft', () => {
+            if (selectedUser && currentUser) {
+              const chatId = getChatId(currentUser.id, selectedUser.id);
+              endCall(chatId);
+            }
+          });
         });
       }
     }
     if (!callState && callFrameRef.current) {
-      callFrameRef.current.destroy();
+      callFrameRef.current.dispose();
       callFrameRef.current = null;
     }
   }, [callState, selectedUser, currentUser]);
@@ -230,7 +253,7 @@ export default function Home({ setCurrentPage }) {
     if (!selectedUser || !currentUser) return;
     const chatId = getChatId(currentUser.id, selectedUser.id);
     if (callFrameRef.current) {
-      callFrameRef.current.destroy();
+      callFrameRef.current.dispose();
       callFrameRef.current = null;
     }
     await endCall(chatId);

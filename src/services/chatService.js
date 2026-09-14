@@ -84,46 +84,25 @@ export async function sendMessageToFirestore(chatId, senderId, text) {
   });
 }
 
-// ===== ЗВОНКИ (Daily.co) =====
+// ===== ЗВОНКИ (Jitsi Meet — бесплатно, без карты) =====
 
-const DAILY_API_KEY = "d2fc4b883612b357c71984550c467e230f0058060a840c9ab21c807a2b1b14f6";
-const DAILY_DOMAIN = "team-telecom-2"; // твой поддомен, без .daily.co
-
-async function createDailyRoom(roomName) {
-  const res = await fetch("https://api.daily.co/v1/rooms", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${DAILY_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      name: roomName,
-      properties: {
-        exp: Math.floor(Date.now() / 1000) + 60 * 60, // комната живёт 1 час
-        enable_screenshare: false
-      }
-    })
-  });
-  const data = await res.json();
-  if (data.url) return data.url;
-  // если комната с таким именем уже есть — просто используем её адрес
-  return `https://${DAILY_DOMAIN}.daily.co/${roomName}`;
+function generateRoomName(chatId) {
+  return `team-telecom-${chatId}-${Date.now()}`;
 }
 
 /** Инициировать звонок. type: "audio" | "video" */
 export async function startCall(chatId, callerId, calleeId, type) {
-  const roomName = `call-${chatId}-${Date.now()}`;
-  const roomUrl = await createDailyRoom(roomName);
+  const roomName = generateRoomName(chatId);
   const callRef = doc(db, "chats", chatId, "call", "current");
   await setDoc(callRef, {
     status: "ringing",
     callerId: String(callerId),
     calleeId: String(calleeId),
     type,
-    roomUrl,
+    roomName,
     startedAt: serverTimestamp()
   });
-  return roomUrl;
+  return roomName;
 }
 
 /** Подписка на состояние звонка в конкретном чате */
