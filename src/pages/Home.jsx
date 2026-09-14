@@ -1,12 +1,17 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Phone, Globe, Smartphone, Tv, ChevronLeft, ChevronRight, MessageCircle, X, Send, User, Circle, Search } from 'lucide-react';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { Phone, Globe, Smartphone, Tv, ChevronLeft, ChevronRight, MessageCircle, X, Send, User, Circle, Search, Video, PhoneOff, PhoneIncoming } from 'lucide-react';
+import DailyIframe from '@daily-co/daily-js';
 import {
   subscribeToUsers,
   subscribeToMessages,
   sendMessageToFirestore,
   getChatId,
   registerUserInFirestore,
-  setUserOffline
+  setUserOffline,
+  startCall,
+  subscribeToCall,
+  acceptCall,
+  endCall
 } from '../services/chatService';
 
 export default function Home({ setCurrentPage }) {
@@ -107,9 +112,6 @@ export default function Home({ setCurrentPage }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Текущий авторизованный пользователь (после Google OAuth), берём из localStorage.
-  // Если у тебя объект пользователя хранится под другим ключом/структурой —
-  // поменяй здесь ключ 'currentUser' и поля id/name/email/picture.
   const [currentUser] = useState(() => {
     try {
       const stored = localStorage.getItem('currentUser');
@@ -120,17 +122,16 @@ export default function Home({ setCurrentPage }) {
   });
   const isRegistered = !!currentUser;
 
-  // Реальные зарегистрированные пользователи из Firestore (реалтайм)
   const [registeredUsers, setRegisteredUsers] = useState([]);
-
-  // Выбранный пользователь для диалога
   const [selectedUser, setSelectedUser] = useState(null);
-
-  // Сообщения текущего открытого диалога (реалтайм из Firestore)
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
-  // Регистрируем текущего пользователя в Firestore и подписываемся на список пользователей
+  // 📞 Состояние звонков
+  const [callState, setCallState] = useState(null);
+  const callFrameRef = useRef(null);
+  const callContainerRef = useRef(null);
+
   useEffect(() => {
     if (!isRegistered) return;
 
@@ -149,7 +150,6 @@ export default function Home({ setCurrentPage }) {
     };
   }, [isRegistered, currentUser]);
 
-  // Подписываемся на сообщения выбранного диалога
   useEffect(() => {
     if (!selectedUser || !currentUser) {
       setChatMessages([]);
@@ -161,6 +161,42 @@ export default function Home({ setCurrentPage }) {
     });
     return () => unsubscribeMessages();
   }, [selectedUser, currentUser]);
+
+  // Подписка на состояние звонка в открытом диалоге
+  useEffect(() => {
+    if (!selectedUser || !currentUser) {
+      setCallState(null);
+      return;
+    }
+    const chatId = getChatId(currentUser.id, selectedUser.id);
+    const unsubscribeCall = subscribeToCall(chatId, (call) => {
+      setCallState(call);
+    });
+    return () => unsubscribeCall();
+  }, [selectedUser, currentUser]);
+
+  // Подключение / отключение окна звонка (Daily.co)
+  useEffect(() => {
+    if (callState?.status === 'active' && callState.roomUrl && callContainerRef.current) {
+      if (!callFrameRef.current) {
+        callFrameRef.current = DailyIframe.createFrame(callContainerRef.current, {
+          showLeaveButton: true,
+          iframeStyle: { width: '100%', height: '100%', border: '0' }
+        });
+        callFrameRef.current.join({ url: callState.roomUrl });
+        callFrameRef.current.on('left-meeting', () => {
+          if (selectedUser && currentUser) {
+            const chatId = getChatId(currentUser.id, selectedUser.id);
+            endCall(chatId);
+          }
+        });
+      }
+    }
+    if (!callState && callFrameRef.current) {
+      callFrameRef.current.destroy();
+      callFrameRef.current = null;
+    }
+  }, [callState, selectedUser, currentUser]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -176,6 +212,28 @@ export default function Home({ setCurrentPage }) {
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  };
+
+  const handleStartCall = async (type) => {
+    if (!selectedUser || !currentUser) return;
+    const chatId = getChatId(currentUser.id, selectedUser.id);
+    await startCall(chatId, currentUser.id, selectedUser.id, type);
+  };
+
+  const handleAcceptCall = async () => {
+    if (!selectedUser || !currentUser) return;
+    const chatId = getChatId(currentUser.id, selectedUser.id);
+    await acceptCall(chatId);
+  };
+
+  const handleEndCall = async () => {
+    if (!selectedUser || !currentUser) return;
+    const chatId = getChatId(currentUser.id, selectedUser.id);
+    if (callFrameRef.current) {
+      callFrameRef.current.destroy();
+      callFrameRef.current = null;
+    }
+    await endCall(chatId);
   };
 
   const handleSendMessage = async (e) => {
@@ -201,7 +259,67 @@ export default function Home({ setCurrentPage }) {
 
   return (
     <div className="bg-[#F8F6F0] min-h-screen space-y-8 sm:space-y-12 pb-8 sm:pb-12 relative">
-      
+
+      {/* 📞 Всплывающее окно входящего звонка */}
+      {callState?.status === 'ringing' && String(callState.calleeId) === String(currentUser?.id) && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto animate-pulse">
+              <PhoneIncoming size={30} />
+            </div>
+            <h3 className="font-bold text-gray-800 text-lg">
+              {selectedUser?.name} {callState.type === 'video' ? 'տեսազանգում է Ձեզ' : 'զանգում է Ձեզ'}
+            </h3>
+            <div className="flex gap-3">
+              <button
+                onClick={handleEndCall}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-full transition"
+              >
+                Մերժել
+              </button>
+              <button
+                onClick={handleAcceptCall}
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-full transition"
+              >
+                Ընդունել
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📞 Ожидание ответа (у звонящего) */}
+      {callState?.status === 'ringing' && String(callState.callerId) === String(currentUser?.id) && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div className="w-16 h-16 bg-blue-100 text-[#004B6E] rounded-full flex items-center justify-center mx-auto animate-pulse">
+              <Phone size={30} />
+            </div>
+            <h3 className="font-bold text-gray-800 text-lg">Զանգում ենք {selectedUser?.name}...</h3>
+            <button
+              onClick={handleEndCall}
+              className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-full transition"
+            >
+              Չեղարկել
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 📞 Активный звонок */}
+      {callState?.status === 'active' && (
+        <div className="fixed inset-0 z-[60] bg-black flex flex-col">
+          <div ref={callContainerRef} className="flex-1 w-full" />
+          <button
+            onClick={handleEndCall}
+            className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white p-3 rounded-full shadow-lg transition"
+            title="Завершить звонок"
+          >
+            <PhoneOff size={20} />
+          </button>
+        </div>
+      )}
+
       {/* 🟦 СЛАЙДЕР С КВАДРАТНЫМИ УГЛАМИ */}
       <section className="bg-[#EBE7E0] relative group overflow-hidden rounded-none shadow-sm min-h-[360px] sm:min-h-[420px]">
         {activeSlide.bgImage ? (
@@ -272,7 +390,6 @@ export default function Home({ setCurrentPage }) {
           </div>
         )}
 
-        {/* Стрелки навигации */}
         <button 
           onClick={prevSlide}
           className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#004B6E] p-2 sm:p-3 rounded-full shadow-md transition transform hover:scale-110 z-20"
@@ -287,7 +404,6 @@ export default function Home({ setCurrentPage }) {
           <ChevronRight size={20} className="sm:w-7 sm:h-7" />
         </button>
 
-        {/* Точки-индикаторы */}
         <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex space-x-1.5 sm:space-x-2 z-20">
           {slides.map((_, idx) => (
             <button
@@ -398,7 +514,6 @@ export default function Home({ setCurrentPage }) {
         {isChatOpen && (
           <div className="mb-4 w-[340px] sm:w-[600px] h-[450px] bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 flex flex-col">
             
-            {/* Шапка чата */}
             <div className="bg-[#004B6E] text-white p-3.5 flex justify-between items-center shrink-0">
               <div className="flex items-center space-x-2">
                 <MessageCircle size={20} className="text-[#FF4B4B]" />
@@ -413,7 +528,6 @@ export default function Home({ setCurrentPage }) {
             </div>
 
             {!isRegistered ? (
-              /* Неавторизованный режим */
               <div className="p-8 text-center space-y-4 my-auto">
                 <div className="w-14 h-14 bg-red-50 text-[#FF4B4B] rounded-full flex items-center justify-center mx-auto">
                   <User size={28} />
@@ -430,13 +544,10 @@ export default function Home({ setCurrentPage }) {
                 </button>
               </div>
             ) : (
-              /* Разделенный чат (Слева пользователи, Справа диалог) */
               <div className="flex flex-1 overflow-hidden">
                 
-                {/* 👈 ЛЕВАЯ ЧАСТЬ: Имена зарегистрированных пользователей */}
                 <div className="w-1/3 border-r bg-slate-50 flex flex-col shrink-0">
                   
-                  {/* Поиск пользователей */}
                   <div className="p-2 border-b bg-white">
                     <div className="relative">
                       <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
@@ -450,7 +561,6 @@ export default function Home({ setCurrentPage }) {
                     </div>
                   </div>
 
-                  {/* Список зарегистрированных пользователей */}
                   <div className="flex-1 overflow-y-auto divide-y divide-gray-100">
                     {filteredUsers.length === 0 ? (
                       <div className="p-4 text-center text-xs text-gray-400">
@@ -485,24 +595,41 @@ export default function Home({ setCurrentPage }) {
                   </div>
                 </div>
 
-                {/* 👉 ПРАВАЯ ЧАСТЬ: Окно переписки */}
                 <div className="flex-1 flex flex-col bg-white">
                   {selectedUser ? (
                     <>
-                      {/* Шапка выбранного собеседника */}
-                      <div className="p-2.5 border-b bg-slate-50 flex items-center space-x-2">
-                        <div className="w-7 h-7 rounded-full bg-[#004B6E] text-white font-bold text-xs flex items-center justify-center">
-                          {selectedUser.name.charAt(0)}
+                      <div className="p-2.5 border-b bg-slate-50 flex items-center justify-between space-x-2">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-7 h-7 rounded-full bg-[#004B6E] text-white font-bold text-xs flex items-center justify-center">
+                            {selectedUser.name.charAt(0)}
+                          </div>
+                          <div>
+                            <h4 className="text-xs font-bold text-gray-800">{selectedUser.name}</h4>
+                            <span className="text-[10px] text-emerald-600">
+                              {selectedUser.isOnline ? 'Առցանց' : 'Անցանց'}
+                            </span>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-gray-800">{selectedUser.name}</h4>
-                          <span className="text-[10px] text-emerald-600">
-                            {selectedUser.isOnline ? 'Առցանց' : 'Անցանց'}
-                          </span>
-                        </div>
+                        {!callState && (
+                          <div className="flex items-center space-x-1.5">
+                            <button
+                              onClick={() => handleStartCall('audio')}
+                              className="p-2 text-[#004B6E] hover:bg-blue-50 rounded-full transition"
+                              title="Аудиозвонок"
+                            >
+                              <Phone size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleStartCall('video')}
+                              className="p-2 text-[#004B6E] hover:bg-blue-50 rounded-full transition"
+                              title="Видеозвонок"
+                            >
+                              <Video size={16} />
+                            </button>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Область сообщений */}
                       <div className="flex-1 p-3 overflow-y-auto space-y-2.5 bg-[#F8F6F0]/30">
                         {chatMessages.length === 0 ? (
                           <div className="text-center text-xs text-gray-400 my-auto pt-8">
@@ -532,7 +659,6 @@ export default function Home({ setCurrentPage }) {
                         )}
                       </div>
 
-                      {/* Ввод сообщения */}
                       <form onSubmit={handleSendMessage} className="p-2 border-t flex items-center space-x-2">
                         <input 
                           type="text" 
@@ -550,7 +676,6 @@ export default function Home({ setCurrentPage }) {
                       </form>
                     </>
                   ) : (
-                    /* Состояние когда собеседник не выбран */
                     <div className="flex-1 flex flex-col items-center justify-center p-4 text-center text-gray-400">
                       <MessageCircle size={32} className="mb-2 opacity-30 text-[#004B6E]" />
                       <p className="text-xs">Ընտրեք օգտատիրոջը՝ զրույցը սկսելու համար</p>
@@ -563,7 +688,6 @@ export default function Home({ setCurrentPage }) {
           </div>
         )}
 
-        {/* Круглая кнопка вызова чата */}
         <button
           onClick={() => setIsChatOpen(!isChatOpen)}
           className="bg-[#004B6E] hover:bg-[#085a82] active:scale-95 text-white p-4 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center relative group"
