@@ -7,25 +7,20 @@ import {
   getChatId,
   registerUserInFirestore,
   setUserOffline,
-  startCall,
+  createCallOffer,
+  setCallAnswer,
   subscribeToCall,
-  acceptCall,
+  addIceCandidate,
+  subscribeToIceCandidates,
   endCall
 } from '../services/chatService';
 
-function loadJitsiScript() {
-  return new Promise((resolve) => {
-    if (window.JitsiMeetExternalAPI) {
-      resolve();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://meet.jit.si/external_api.js';
-    script.async = true;
-    script.onload = () => resolve();
-    document.body.appendChild(script);
-  });
-}
+const ICE_SERVERS = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' }
+  ]
+};
 
 export default function Home({ setCurrentPage }) {
   // Массив баннеров
@@ -140,10 +135,14 @@ export default function Home({ setCurrentPage }) {
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
-  // 📞 Состояние звонков
+  // 📞 Состояние звонков (WebRTC)
   const [callState, setCallState] = useState(null);
-  const callFrameRef = useRef(null);
-  const callContainerRef = useRef(null);
+  const pcRef = useRef(null);
+  const localStreamRef = useRef(null);
+  const myRoleRef = useRef(null); // "caller" | "callee"
+  const iceUnsubRef = useRef(null);
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
 
   useEffect(() => {
     if (!isRegistered) return;
@@ -188,38 +187,39 @@ export default function Home({ setCurrentPage }) {
     return () => unsubscribeCall();
   }, [selectedUser, currentUser]);
 
-  // Подключение / отключение окна звонка (Jitsi Meet)
+  // Когда звонящему приходит ответ (answer) от собеседника — подключаем его
   useEffect(() => {
-    if (callState?.status === 'active' && callState.roomName && callContainerRef.current) {
-      if (!callFrameRef.current) {
-        loadJitsiScript().then(() => {
-          if (!callContainerRef.current) return;
-          const api = new window.JitsiMeetExternalAPI('meet.jit.si', {
-            roomName: callState.roomName,
-            parentNode: callContainerRef.current,
-            width: '100%',
-            height: '100%',
-            userInfo: { displayName: currentUser?.name || 'Օգտատեր' },
-            configOverwrite: {
-              startAudioOnly: callState.type === 'audio',
-              prejoinPageEnabled: false
-            }
-          });
-          callFrameRef.current = api;
-          api.addListener('videoConferenceLeft', () => {
-            if (selectedUser && currentUser) {
-              const chatId = getChatId(currentUser.id, selectedUser.id);
-              endCall(chatId);
-            }
-          });
-        });
+    const pc = pcRef.current;
+    if (
+      pc &&
+      myRoleRef.current === 'caller' &&
+      callState?.answer &&
+      !pc.currentRemoteDescription
+    ) {
+      pc.setRemoteDescription(new RTCSessionDescription(callState.answer)).catch(() => {});
+    }
+  }, [callState]);
+
+  // Когда звонок завершился (документ удалён) — подчищаем всё за собой
+  useEffect(() => {
+    if (!callState) {
+      if (iceUnsubRef.current) {
+        iceUnsubRef.current();
+        iceUnsubRef.current = null;
       }
+      if (pcRef.current) {
+        pcRef.current.close();
+        pcRef.current = null;
+      }
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach((t) => t.stop());
+        localStreamRef.current = null;
+      }
+      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+      if (localVideoRef.current) localVideoRef.current.srcObject = null;
+      myRoleRef.current = null;
     }
-    if (!callState && callFrameRef.current) {
-      callFrameRef.current.dispose();
-      callFrameRef.current = null;
-    }
-  }, [callState, selectedUser, currentUser]);
+  }, [callState]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -237,25 +237,106 @@ export default function Home({ setCurrentPage }) {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
 
+  function createPeerConnection(chatId, role) {
+    const pc = new RTCPeerConnection(ICE_SERVERS);
+    pc.onicecandidate = (e) => {
+      if (e.candidate) {
+        addIceCandidate(chatId, role, e.candidate.toJSON());
+      }
+    };
+    pc.ontrack = (e) => {
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = e.streams[0];
+      }
+    };
+    return pc;
+  }
+
   const handleStartCall = async (type) => {
     if (!selectedUser || !currentUser) return;
     const chatId = getChatId(currentUser.id, selectedUser.id);
-    await startCall(chatId, currentUser.id, selectedUser.id, type);
+    myRoleRef.current = 'caller';
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: type === 'video'
+      });
+      localStreamRef.current = stream;
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+
+      const pc = createPeerConnection(chatId, 'caller');
+      stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+      pcRef.current = pc;
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      await createCallOffer(chatId, currentUser.id, selectedUser.id, type, {
+        type: offer.type,
+        sdp: offer.sdp
+      });
+
+      iceUnsubRef.current = subscribeToIceCandidates(chatId, 'callee', (candidate) => {
+        pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(() => {});
+      });
+    } catch (err) {
+      console.error('Չհաջողվեց սկսել զանգը:', err);
+      window.alert('Չհաջողվեց միանալ խոսափողին/տեսախցիկին։ Ստուգեք թույլտվությունները բրաուզերում։');
+    }
   };
 
   const handleAcceptCall = async () => {
-    if (!selectedUser || !currentUser) return;
+    if (!selectedUser || !currentUser || !callState?.offer) return;
     const chatId = getChatId(currentUser.id, selectedUser.id);
-    await acceptCall(chatId);
+    myRoleRef.current = 'callee';
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: callState.type === 'video'
+      });
+      localStreamRef.current = stream;
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+
+      const pc = createPeerConnection(chatId, 'callee');
+      stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+      pcRef.current = pc;
+
+      await pc.setRemoteDescription(new RTCSessionDescription(callState.offer));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+
+      await setCallAnswer(chatId, { type: answer.type, sdp: answer.sdp });
+
+      iceUnsubRef.current = subscribeToIceCandidates(chatId, 'caller', (candidate) => {
+        pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(() => {});
+      });
+    } catch (err) {
+      console.error('Չհաջողվեց ընդունել զանգը:', err);
+      window.alert('Չհաջողվեց միանալ խոսափողին/տեսախցիկին։ Ստուգեք թույլտվությունները բրաուզերում։');
+      handleEndCall();
+    }
   };
 
   const handleEndCall = async () => {
     if (!selectedUser || !currentUser) return;
     const chatId = getChatId(currentUser.id, selectedUser.id);
-    if (callFrameRef.current) {
-      callFrameRef.current.dispose();
-      callFrameRef.current = null;
+
+    if (iceUnsubRef.current) {
+      iceUnsubRef.current();
+      iceUnsubRef.current = null;
     }
+    if (pcRef.current) {
+      pcRef.current.close();
+      pcRef.current = null;
+    }
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((t) => t.stop());
+      localStreamRef.current = null;
+    }
+    myRoleRef.current = null;
+
     await endCall(chatId);
   };
 
@@ -331,8 +412,34 @@ export default function Home({ setCurrentPage }) {
 
       {/* 📞 Активный звонок */}
       {callState?.status === 'active' && (
-        <div className="fixed inset-0 z-[60] bg-black flex flex-col">
-          <div ref={callContainerRef} className="flex-1 w-full" />
+        <div className="fixed inset-0 z-[60] bg-black flex flex-col items-center justify-center">
+          {callState.type === 'video' ? (
+            <>
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <video
+                ref={localVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="absolute bottom-24 right-4 w-28 h-40 sm:w-36 sm:h-48 object-cover rounded-xl border-2 border-white shadow-lg"
+              />
+            </>
+          ) : (
+            <>
+              <video ref={remoteVideoRef} autoPlay playsInline className="hidden" />
+              <video ref={localVideoRef} autoPlay playsInline muted className="hidden" />
+              <div className="w-24 h-24 bg-white/10 text-white rounded-full flex items-center justify-center mb-4">
+                <Phone size={40} />
+              </div>
+              <p className="text-white font-bold text-lg">{selectedUser?.name}</p>
+              <p className="text-white/60 text-sm mt-1">Ձայնային զանգ</p>
+            </>
+          )}
           <button
             onClick={handleEndCall}
             className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white p-3 rounded-full shadow-lg transition"
